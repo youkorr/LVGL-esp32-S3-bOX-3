@@ -1,0 +1,1176 @@
+# ------------------------------------------- #
+# -------------- SUBSTITUTIONS -------------- #
+# ------------------------------------------- #
+
+substitutions:
+  name: esp32-s3box-3
+  friendly_name: ESP32-S3-Box-3
+  frigate_snapshot_url: "http://192.168.1.20:8123/local/cctv/snapshots/frigate1-1730408045.992231-4mcpxe-clean.png"
+  local_image_format: "RGB565"
+  base_snapshot_url: "http://192.168.1.20:8123/local/cctv/snapshots/"
+  base_frigate_url: "http://192.168.1.20:8123/api/frigate/notifications/1730506459.355248-3s2cry/snapshot.jpg?external_auth=1"
+  camera_snapshot: "frigate1-1730408045.992231-4mcpxe-clean.png"
+  test_snapshot_url: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/47/PNG_transparency_demonstration_1.png/280px-PNG_transparency_demonstration_1.png"
+  test_image_web_url: "https://a.espncdn.com/i/teamlogos/soccer/500/359.png"
+  test1_web_url: "https://a.espncdn.com/i/teamlogos/soccer/500/364.png"
+  image_name: "clean.png"
+  camera_1_url: "http://192.168.1.158:80/media/frigate/clips/frigate1-1730434451.410002-o43cgj-clean.png"
+  #frigate_url: "http://192.168.1.124/files/camera%20snapshot/frigate1-1730071085.992085-kv11rh-clean.png"
+    # Display related
+  #local_image_size: '1080x720'
+  #local_image_use_transparency: "true"
+  #BOARD_TFT_WIDTH: "320"
+  #BOARD_TFT_HEIGHT: "240"
+  external_media_player: salle_tv  ##change this to your external media player enity_id: do not include media_player.
+  home_assistant_host: http://homeassistant.local:8123 #
+
+  font_glyphs: '&@!"''%()+=,-_.:°/$€£¥?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ abcdefghijklmnopqrstuvwxyzÀàÁáÂâÃãÄäĀāĂăÅåǺǻẠạĄąÆæǼǽĆćĈĉČčĊċÇçĎďĐđÐðÈèÉéÊêẼẽĚěËëĒēĔĕĖėẸẹĘęĜĝǦǧĞğĠġĢģĤĥĦħıÌìÍíÎîĨĩÏïĪīĬĭİỊịĮįȷĴĵĶķĸĹĺĽľĻļŁłĿŀŃńÑñŇňŅņƝɲŊŋŉÒòÓóÔôÕõÖöŌōŎŏŐőỌọǪǫØøǾǿŒœŔŕŘřŖŗŚśŜŝŠšŞşȘșẞßŤťŢţȚțŦŧÞþÙùÚúÛûŨũÜüŪūŬŭŮůŰűỤụŲųẀẁẂẃŴŵẄẅỲỳÝýŶŷỸỹŸÿȲȳŹźŽžŻżĲĳƏə'  
+
+
+
+  micro_wake_word_model_3: https://github.com/kahrendt/microWakeWord/releases/download/okay_nabu/okay_nabu.json
+  
+  settings:           "\U0000e900" # settings
+  thermostat:         "\U0000e901" # thermostat
+  lock:               "\U0000e902" # security, alarm
+  camera:             "\U0000e903" # camera
+  curtains:           "\U0000e904" # curtains
+  lights:             "\U0000e905" # lights
+  air_conditioner:    "\U0000e906" # air_conditioner
+  motion:             "\U0000e907" # motion, presence
+  heating:            "\U0000e908" # heating
+  alarm_off:          "\U0000e909" # alarm off
+  alarm_on:           "\U0000e90a" # alarm on
+  ha:                 "\U0000e90b" # home assistant
+  color_temp:         "\U0000e90c" # color_temp
+  ventilation:        "\U0000e90d" # ventilation
+  wifi_25:            "\U0000e91e" # wifi signal from 25% to 1%
+  wifi_50:            "\U0000e91f" # wifi signal from 50% to 25%
+  wifi_75:            "\U0000e910" # wifi signal from 75% to 50%
+  wifi_100:           "\U0000e911" # wifi signal from 100% to 75% or disable
+  humidity:           "\U0000e912" # humidity
+  co2:                "\U0000e913" # co2
+  tvoc:               "\U0000e914" # air quality
+  temperature:        "\U0000e915" # temperature
+  illumination:       "\U0000e916" # lux
+  empty:              "\U0000e917" # placeholder
+  vacuum_cleaner:     "\U0000e918" # vacuum cleaner
+  logo:               "\U0000e919" # logo
+  alarm_home:         "\U000F068A" # alarm home
+  alarm_away:         "\U000F0BC4" # alarm away
+  alarm_nigt:         "\U000F1828" # armed night
+  disarmed:           "\U000F099E" # disarmed
+  arming:             "\U000F0565" # arming
+  home:               "\U000F1A12" # home 
+  tv:                 "\U000F07F4" # tv 
+  sound:              "\U000F07C5" # sound
+  Battery:            "\U000F0091" # battery
+  music:              "\U000F0384" # music
+  tools:              "\U000F1322" #tools
+  cctv:               "\U000F07AE" #cctv        
+  cog:                "\U000F0493" #settings cog  
+  voice:              "\U000F05CB" #voice
+  screen:             "\U000F0502" #screen settings
+  info:               "\U000F1C6F" #info
+  scr:                "\U000F0521" #toggle on
+  screen_off:         "\U000F0D90" #screen off
+  bell:               "\U000F009E" #bell
+  stop:               "\U000F04DB" #stop
+  sleep:              "\U000F04B2" #sleep
+  s_saver:            "\U000F1110" #s_saver
+  light_mut:          "\U000F18DD" #light_mut
+  alarm_bell:         "\U000F009E" #alarm bell
+  clock:              "\U000F0150" #clock
+  source:             "\U000F062C" #source
+  kubernetes:         "\U000F10FE" #kubernetes
+  github:             "\U000F02A4" #github
+  angular:            "\U000F06B2" #angular
+  radio:              "\U000F0439" #radio
+  next:               "\U000F0BB1" #next
+  lightbulb:          "\U000F0335"
+  aircon:             "\U000F0D43"
+  ledstrip:           "\U000F1051"
+  package:            "\U000F03D7"
+  lumiere:            "\U000F07D6"
+  blind:              "\U000F00AC"
+  nightlight:         "\U000F1A4C"
+  network:            "\U000F1087"
+  videocall:          "\U000F036B"
+  application:        "\U000F0614"
+  forklift:           "\U000F07C9"
+  gmail:              "\U000F02AB"
+  slack:              "\U000F04B1"
+  command:            "\U000F0633"
+
+
+  
+
+# ----------------------------------------- #
+# -------------- COLORS ------------------- #
+# ----------------------------------------- #
+
+color:
+  - id: color_black
+    hex: 0d0d0d
+  - id: color_dark_gray
+    hex: 333333
+  - id: color_gray
+    hex: 666666
+  - id: color_white
+    hex: f2f0eb
+  - id: color_red
+    hex: ff0000
+  - id: color_crimson
+    hex: f5075c
+  - id: color_blue
+    hex: 2fc0ff
+  - id: color_yellow
+    hex: e7c12c
+  - id: color_amber
+    hex: f4a900
+  - id: color_mint
+    hex: 39d19c
+  - id: color_green
+    hex: 00ff00
+  - id: color_orange
+    hex: f07c40
+  - id: color_deep_orange
+    hex: ff6600
+  - id: color_violet
+    hex: 9670d6
+  - id: color_dark_blue
+    hex: 4867aa
+
+  - id: color_nova
+    hex: 93A4EC
+
+  - id: color_navy
+    hex: aad6ec
+
+  - id: color_cyan
+    hex: 00FFFF  
+  - id: color_magenta
+    hex: FF00FF     
+
+  # Nova Colors
+  - id: nova_color # pink
+    hex: "e38de3"
+  - id: pri_color # light (mantle)
+    hex: "24273a"
+  - id: sec_color # dark (crust)
+    hex: "181926"
+  - id: text_color
+    hex: "cad3f5"
+  - id: off_color
+    hex: "5b6078"
+
+  # Blue Colors
+  - id: blue_color
+    hex: "6b93e3"
+  - id: green_color
+    hex: "a6da95"
+  - id: yellow_color
+    hex: "ffd17a"
+  - id: orange_color
+    hex: "e0752b"
+  - id: red_color
+    hex: "de455c"  
+
+  - id: color_aqua
+    hex: "00ffff"     
+
+
+
+# ------------------------------------------- #
+# ---------- GLOBALS VARIABLES -------------- #
+# ------------------------------------------- #
+
+globals:
+
+  - id: s_saver_visible
+    type: bool
+    restore_value: no
+    initial_value: "false"
+
+  - id: page_home_visible
+    type: bool
+    restore_value: no
+    initial_value: "false"    
+
+  - id: display_timeout_global
+    type: int
+    restore_value: true
+    initial_value: "2"
+
+  - id: last_time
+    type: unsigned long
+    restore_value: false
+    initial_value: '0'
+    
+  - id: language_select
+    type: bool
+    restore_value: true
+    initial_value: "false"
+
+  - id: current_pin
+    type: std::string
+    initial_value: ""   
+         
+  - id: mute_value
+    type: bool
+    restore_value: no
+    initial_value: "false" 
+  - id: speaker_volume
+    type: int
+    restore_value: no
+    initial_value: '5'   
+
+  - id: media_state
+    type: bool
+    restore_value: no
+    initial_value: "false"    
+
+  - id: is_muted
+    type: bool
+    initial_value: "false"   
+
+  - id: frequency_bands
+    type: float[7]  
+    restore_value: no     
+
+  - id: sensors_buzzer
+    type: bool
+    restore_value: true
+    initial_value: "false"    
+
+  - id: motion_sensor
+    type: bool
+    restore_value: true
+    initial_value: "false"  
+
+  - id: bar_value
+    type: int
+    initial_value: "0"  
+
+  - id: sensor_piscine
+    type: bool
+    restore_value: true
+    initial_value: "false"    
+
+  - id: global_first_active_timer
+    type: voice_assistant::Timer
+    restore_value: false
+
+  - id: global_is_timer_active
+    type: bool
+    restore_value: false
+
+  - id: global_first_timer
+    type: voice_assistant::Timer
+    restore_value: false
+
+  - id: global_is_timer
+    type: bool
+    restore_value: false     
+
+  - id: image_index
+    type: int
+    restore_value: no
+    initial_value: '0'
+  - id: total_images
+    type: int
+    restore_value: no
+    initial_value: '4'  
+
+
+
+
+
+lvgl: !include src/display/lvgl.yaml
+script: !include src/display/script.yaml
+switch: !include src/display/switch.yaml
+sensor: !include src/display/sensor.yaml
+text_sensor: !include src/display/text_sensor.yaml
+image: !include src/display/images.yaml
+font: !include src/display/fonts.yaml
+# ------------------------------------------- #
+# ------------ ESPHOME OPTIONS -------------- #
+# ------------------------------------------- #
+
+esphome:
+  name: display
+  friendly_name: display
+  min_version: 2024.9.0
+  platformio_options:
+    board_build.flash_mode: dio
+  on_boot:
+    priority: -100
+    then: 
+      - script.execute: show_page_boot                
+
+esp32:
+  board: esp32s3box
+  variant: esp32s3
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+    version: recommended
+    sdkconfig_options:
+      CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240: "y"
+      CONFIG_ESP32S3_DATA_CACHE_64KB: "y"
+      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: "y"
+      CONFIG_AUDIO_BOARD_CUSTOM: "y"
+      CONFIG_ESP32_S3_BOX_3_BOARD: "y"
+    components:
+      - name: esp32_s3_box_3_board
+        source: github://jesserockz/esp32-s3-box-3-board@main
+        refresh: 0s
+##############################################################################################################################################################################        
+######################################################################## AUDIO AND VOICE ASSISTANT ###########################################################################
+select:
+  - platform: template
+    entity_category: config
+    name: Wake word engine location
+    id: wake_word_engine_location
+    optimistic: true
+    restore_value: true
+    options:
+      - In Home Assistant
+      - On device
+    initial_option: In Home Assistant
+    on_value:
+      - if:
+          condition:
+            lambda: return x == "In Home Assistant";
+          then:
+            - micro_wake_word.stop
+            - delay: 500ms
+            - lambda: id(va).set_use_wake_word(true);
+            - voice_assistant.start_continuous:
+            - text_sensor.template.publish:
+                id: wakeword_location
+                state: !lambda 'return "Home Assistant";'
+            - component.update: my_display
+      - if:
+          condition:
+            lambda: return x == "On device";
+          then:
+            - text_sensor.template.publish:
+                id: wakeword_location
+                state: !lambda 'return "On Device";'
+            - lambda: id(va).set_use_wake_word(false);
+            - voice_assistant.stop
+            - delay: 500ms
+            - micro_wake_word.start
+            - component.update: my_display
+
+i2s_audio:
+  - id: i2s_shared
+    i2s_lrclk_pin:
+      number: GPIO45
+      ignore_strapping_warning: true
+    i2s_bclk_pin: GPIO17
+    i2s_mclk_pin: GPIO2
+    access_mode: duplex
+
+adf_pipeline:
+  - platform: i2s_audio
+    type: audio_out
+    id: adf_i2s_out
+    i2s_audio_id: i2s_shared
+    i2s_dout_pin: GPIO15
+    adf_alc: false
+    dac:
+      i2c_id: bus_a
+      model: es8311
+      address: 0x18
+      enable_pin:
+        number: GPIO46
+        ignore_strapping_warning: true
+    sample_rate: 16000
+    bits_per_sample: 16bit
+    fixed_settings: true
+
+  - platform: i2s_audio
+    type: audio_in
+    id: adf_i2s_in
+    i2s_audio_id: i2s_shared
+    i2s_din_pin: GPIO16
+    pdm: false
+    adc:
+      i2c_id: bus_a
+      model: es7210
+      address: 0x40
+    sample_rate: 16000
+    bits_per_sample: 16bit
+    fixed_settings: true
+
+media_player:
+  - platform: adf_pipeline
+    id: adf_media_player
+    name: display_s3_box_media_player
+    internal: false
+    keep_pipeline_alive: true
+    announcement_audio:
+      sample_rate: 24000
+      bits_per_sample: 16
+      num_channels: 1
+    pipeline:
+      - self
+      - resampler
+      - adf_i2s_out
+    on_play: 
+      - lambda: |-
+          id(media_state) = true;
+      - component.update: my_display
+    on_idle:
+      - lambda: |-
+          id(media_state) = false;
+      - component.update: my_display
+microphone:
+  - platform: adf_pipeline
+    id: box_mic
+    keep_pipeline_alive: true
+    pipeline:
+      - adf_i2s_in
+      - resampler
+      - self
+#########################################################################################################################################################################      
+################################################### micro wake word #####################################################################################################
+micro_wake_word:
+  vad:
+  models: 
+    - model: ${micro_wake_word_model_3}
+  on_wake_word_detected:
+    - if:
+        condition:
+          and:
+            - switch.is_off: output_audio          
+            - switch.is_on: wake_sound
+        then:
+          - media_player.play_media:
+              id: adf_media_player
+              media_url: 'http://homeassistant.local:8123/local/sounds/ds9intercom.mp3'
+          - delay: 1s
+          - media_player.stop
+          - voice_assistant.start
+        else:
+          if:
+            condition:
+              and:
+                - switch.is_on: output_audio
+                - switch.is_on: wake_sound
+            then:
+              - homeassistant.service:
+                  service: media_player.play_media
+                  data:
+                    entity_id: media_player.${external_media_player}
+                    media_content_id: 'http://homeassistant.local:8123/local/sounds/ds9intercom.mp3'
+                    media_content_type: music
+              - media_player.stop
+              - voice_assistant.start
+            else:
+              if:
+                condition:
+                  - switch.is_off: wake_sound
+                then:
+                  - media_player.stop
+                  - voice_assistant.start
+                  - media_player.stop           
+
+voice_assistant:
+  id: va
+  microphone: box_mic
+  media_player: adf_media_player
+  use_wake_word: true
+  noise_suppression_level: 2
+  auto_gain: 31dBFS
+  volume_multiplier: 4.0
+  on_wake_word_detected:
+    - if:
+        condition:
+          and:
+            - switch.is_off: output_audio          
+            - switch.is_on: wake_sound
+        then:    
+          - media_player.play_media:
+              media_url: '${home_assistant_host}/local/sounds/ds9intercom.mp3'
+          - delay: 3s
+          - media_player.stop
+          - lvgl.page.show: page_spectrum
+        else:
+          if:
+            condition:
+              and:
+                - switch.is_on: wake_sound
+                - switch.is_on: output_audio
+            then:
+              - homeassistant.service:
+                  service: media_player.play_media
+                  data:
+                    entity_id: media_player.${external_media_player}
+                    media_content_id: '${home_assistant_host}/local/sounds/commandcodesverified_ep.mp3'
+                    media_content_type: music
+    - media_player.stop
+    
+  on_start:
+        - light.turn_on: display_backlight    
+        - lvgl.page.show: page_spectrum
+  on_stt_end:
+    - text_sensor.template.publish:
+        id: text_request
+        state: !lambda return x;
+  on_stt_vad_end:
+    - lvgl.page.show: page_lcars
+    - light.turn_on: display_backlight
+  on_tts_start:
+    - delay: 3s
+    - text_sensor.template.publish:
+        id: text_response
+        state: !lambda return x;
+  on_tts_end:
+    - lvgl.page.show: page_lcars
+    - if:
+        condition:
+          - switch.is_on: output_audio
+        then:
+          - homeassistant.service:
+              service: media_player.play_media
+              data:
+                entity_id: media_player.${external_media_player}
+                media_content_id: !lambda 'return x;'
+                media_content_type: music
+                announce: "true"
+    - delay: 12s
+    - lvgl.page.show: page_home
+   
+  on_error:
+    - if:
+        condition:
+          not:
+            - voice_assistant.is_running
+        then:
+          - lvgl.page.show: page_spectrum
+  on_end:
+    - if:
+        condition:
+          lambda: return id(wake_word_engine_location).state == "On device";
+        then:
+          - wait_until:
+              not:
+                voice_assistant.is_running:
+          - micro_wake_word.start
+          - delay: 100ms
+          - micro_wake_word.start
+        else:
+          - wait_until:
+              not:
+                voice_assistant.is_running:
+          - lambda: id(va).set_use_wake_word(false);
+          - voice_assistant.stop:    
+          - delay: 100ms
+          - lambda: id(va).set_use_wake_word(true);
+          - delay: 100ms
+          - voice_assistant.start_continuous:   
+
+  on_timer_started:
+    - script.execute: timer_ending
+  on_timer_cancelled:
+    - lambda: id(time_remaining_0).publish_state ("0:00:00"); 
+    - component.update: my_display
+  on_timer_updated:
+    - component.update: my_display
+  on_timer_tick:
+    - lambda: |-
+        int seconds = timers[0].seconds_left;
+        int hours = seconds / 3600;
+        int minutes = (seconds % 3600) / 60;
+        seconds %= 60;
+        id(time_remaining_0).publish_state(str_sprintf("%d:%02d:%02d", hours, minutes, seconds)); 
+    - component.update: my_display
+  on_timer_finished:
+    if: 
+      condition:
+        - switch.is_on: output_audio
+      then:
+        - switch.turn_on: timer_ringing
+        - script.execute: timer_started_external
+        - lvgl.page.show: page_timer_finished
+        - component.update: my_display
+      else:
+        - if:
+            condition:
+              - switch.is_off: output_audio
+            then:
+              - switch.turn_on: timer_ringing
+              - script.execute: timer_started
+              - lvgl.page.show: page_timer_finished
+              - component.update: my_display                 
+
+
+############################################################################################################################################################################### 
+########################################################################### PSRAM #############################################################################################        
+psram:
+  mode: octal
+  speed: 80MHz
+
+
+# Enable logging
+logger:
+  hardware_uart: USB_SERIAL_JTAG
+
+debug:
+  update_interval: 5s
+
+# Enable Home Assistant API
+api:
+  on_client_connected:
+    - micro_wake_word.start
+    - if:
+        condition:
+          lambda: 'return (0 == client_info.find("Home Assistant "));'
+        then:
+          - lvgl.label.update: 
+              id: ha_status
+              text_color: color_blue
+
+  on_client_disconnected:
+    - if:
+        condition:
+          lambda: 'return (0 == client_info.find("Home Assistant "));'
+        then:
+          - lvgl.label.update: 
+              id: ha_status
+              text_color: color_dark_gray
+
+ota:
+  - platform: esphome
+      
+external_components:
+  - source:
+      type: git
+      url: https://github.com/gnumpi/esphome_audio
+      ref: dev-next
+    components: [ adf_pipeline, i2s_audio ]
+    refresh: 0s 
+
+
+
+      
+
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+time:
+  - platform: homeassistant
+    id: esptime
+    on_time:
+      - minutes: '*'
+        seconds: 0
+        then:
+          - script.execute: time_update
+
+        
+
+############################################################ script ######################################################################################################
+
+
+
+         
+
+
+
+################################################################################################################################################################################
+################################################## ------------------ SWITCHS ------------------- ##############################################################################
+################################################################################################################################################################################
+
+
+    
+
+ 
+##################################################################################################################################################################################        
+# ------------------------------------------- ####################################################################################################################################
+##################################################### ---------------- SENSORS ------------------ ################################################################################
+# ------------------------------------------- ####################################################################################################################################
+
+
+
+
+
+
+
+# ------------------------------------------- #
+# ------------- TEXT SENSORS ---------------- #
+# ------------------------------------------- #
+
+
+
+  
+            
+
+# ---------------------------------------------- #
+# ---------------- THERMOSTAT ------------------ #
+# ---------------------------------------------- #
+
+
+
+
+# -------------------------------------------- #
+# ------------------ LIGHTS ------------------ #
+# -------------------------------------------- #
+
+light:
+  - platform: monochromatic
+    id: display_backlight
+    name: LCD Backlight
+    entity_category: config
+    output: backlight_output
+    restore_mode: ALWAYS_ON
+    default_transition_length: 0ms
+
+#########################################################################################################################################################################
+############################################################### images ##################################################################################################
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+
+   
+
+
+###############################################################################################################################################################################
+########################################################## font ################################################################################################################
+# ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- #
+
+
+    
+
+     
+###############################################################################################################################################################################
+#################################################################################################################################################################################
+############################################################### LGVL ###########################################################################################################################
+
+                
+
+ 
+###############################################################################################################################################################################   
+###############################################################################################################################################################################
+###############################################################################################################################################################################
+
+output:
+  - platform: ledc
+    pin: GPIO47
+    id: backlight_output
+
+button:
+  - platform: restart
+    id: reboot
+    name: "Reboot"
+    entity_category: diagnostic    
+
+
+number:
+  - id: s_saver_delay
+    platform: template
+    name: "Scr/save delay"
+    icon: 'mdi:sleep'
+    entity_category: config
+    unit_of_measurement: 'secs'
+    optimistic: true
+    restore_value: true
+    initial_value: 30
+    step: 5
+    min_value: 10
+    max_value: 999999
+    on_value:
+      - component.update: my_display
+      - component.update: s_saver_delay
+      - script.execute: saver_enabled
+      
+  - id: s_saver_blank_delay
+    platform: template
+    name: "Scr/off delay"
+    icon: 'mdi:monitor-off'
+    entity_category: config
+    unit_of_measurement: 'secs'
+    optimistic: true
+    restore_value: true
+    initial_value: 30
+    step: 5
+    min_value: 10
+    max_value: 999999
+    on_value:
+      - component.update: s_saver_blank_delay
+      - script.execute: saver_enabled
+      - component.update: my_display    
+
+  - id: s_saver_brightness
+    platform: template
+    name: "Scr/save Brightness"
+    icon: 'mdi:sleep'
+    entity_category: config
+    unit_of_measurement: '%'
+    optimistic: true
+    restore_value: true
+    initial_value: 30
+    step: 5
+    min_value: 20
+    max_value: 100
+    on_value:
+      - component.update: s_saver_brightness
+      - script.execute: saver_enabled
+      - component.update: my_display
+      
+  - id: s_default_brightness
+    platform: template
+    name: "Default Brightness"
+    icon: 'mdi:monitor'
+    entity_category: config
+    unit_of_measurement: '%'
+    optimistic: true
+    restore_value: true
+    initial_value: 100
+    step: 5
+    min_value: 20
+    max_value: 100
+    on_value:
+      - component.update: s_default_brightness
+      - script.execute: saver_enabled
+      - component.update: my_display
+
+
+
+i2c:
+  - id: bus_a
+    sda: GPIO08
+    scl: GPIO18
+    scan: false
+    sda_pullup_enabled: true
+    scl_pullup_enabled: true
+    frequency: 100kHz
+
+######################################################################### touchscreen ##########################################################################################
+touchscreen:
+  platform: gt911
+  i2c_id: bus_a
+  id: gt911_touchscreen
+  update_interval: 16ms
+  interrupt_pin:
+    number: GPIO3
+    ignore_strapping_warning: true
+  on_touch:
+    - lambda: id(display_backlight).turn_on().set_brightness(1.0).perform();
+
+
+
+
+  
+
+spi:
+  clk_pin: 7
+  mosi_pin: 6
+
+######################################################################### display ###############################################################################################    
+display:
+  - platform: ili9xxx
+    id: my_display
+    model: S3BOX
+    data_rate: 40MHz
+    cs_pin: 5
+    dc_pin: 4
+    reset_pin:
+      number: 48
+      inverted: true
+    update_interval: never
+    invert_colors: false
+    auto_clear_enabled: False
+
+
+#################################################### top left hand physical button ###############################################################################################
+binary_sensor:
+
+  - platform: gpio
+    id: top_left_button
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: true
+      ignore_strapping_warning: true
+
+######################################################### radar sensor ##############################################################################################################
+  - platform: gpio
+    pin:
+      number: GPIO21
+    name: "Presence detect"
+    disabled_by_default: false
+    device_class: "occupancy"
+    on_state:
+      if:
+        condition:
+          and:
+            - switch.is_on: s_saver_presc
+            - lambda: 'return id(s_saver_visible);'
+        then:
+          - lvgl.page.show: page_home
+          - component.update: my_display
+          - light.turn_on: 
+              id: display_backlight
+              brightness: 90%
+
+        else:      
+          if:
+            condition:
+              not:
+              - lambda: 'return id(page_home_visible);' 
+            then:
+              - component.update: my_display
+              - light.turn_on: 
+                  id: display_backlight
+                  brightness: 90%
+
+              - script.execute: saver_enabled                
+
+
+#################################################     red circle home button   ####################################################################################################
+  - platform: gt911
+    id: home_button
+    index: 0
+    on_press:
+          - lvgl.page.show: page_home
+          - light.turn_on: 
+              id: display_backlight
+              brightness: 90%     
+
+######################################################## LIGHT ##############################################################################################################
+
+
+
+
+
+################################################################################################################################################################################
+####################################################### ALARM KEY ##################################################################################################################################
+key_collector:
+- source_id: key_alarm
+  min_length: 4
+  max_length: 4
+  end_keys: "AD"
+  end_key_required: true
+  clear_keys: "*"
+  allowed_keys: "0123456789"
+  timeout: 3s
+  on_result:
+    - if:
+        condition:
+          and:
+          - lambda: 'return id(alarm_status).state == "disarmed";'
+          - lambda: "return end == 'A';"
+        then:
+          - homeassistant.service:
+              service: alarm_control_panel.alarm_arm_away
+              data:
+                entity_id: alarm_control_panel.alarmo
+                code: !lambda 'return x;'  
+          - lvgl.label.update:
+              id: label_alarm_code
+              text: "ARMED"
+          - lvgl.widget.update:
+              id: alarm_code
+              bg_color: color_green
+    - if:
+        condition:
+          and:
+          - lambda: 'return (id(alarm_status).state == "arming" || id(alarm_status).state == "armed_away" || id(alarm_status).state == "armed_home" || id(alarm_status).state == "armed_night");' 
+          - lambda: "return end == 'D';"
+        then:
+          - homeassistant.service:
+              service: alarm_control_panel.alarm_disarm
+              data:
+                entity_id: alarm_control_panel.alarmo
+                code: !lambda 'return x;'
+          - lvgl.label.update:
+              id: label_alarm_code
+              text: "DISARM"
+          - lvgl.widget.update:
+              id: alarm_code
+              bg_color: color_blue
+
+
+
+################################################################################################################################################################################
+################################################################### visualizer #################################################################################################
+interval:
+  - interval: 100ms  
+    then:
+      lambda: |-
+        // Simulate changing spectrum values for animation using sine wave
+        for (int i = 0; i < 5; i++) {
+          // Generate smooth wave values using sine, oscillating between 0 and 100
+          id(frequency_bands)[i] = (sin(millis() / 200.0 + i) * 50) + 50;
+          id(frequency_bands)[7 - i] = id(frequency_bands)[i];  // Mirror the values for symmetry
+        }
+
+        // Update each bar according to the simulated frequency values
+        for (int i = 0; i < 7; i++) {
+          lv_obj_t* bar;
+          switch(i) {
+            case 0: bar = id(spectrum_bar_0); break;
+            case 1: bar = id(spectrum_bar_1); break;
+            case 2: bar = id(spectrum_bar_2); break;
+            case 3: bar = id(spectrum_bar_3); break;
+            case 4: bar = id(spectrum_bar_4); break;
+            case 5: bar = id(spectrum_bar_5); break;
+            case 6: bar = id(spectrum_bar_6); break;
+          }
+
+          // Set the bar value based on the sine wave data
+          int value = id(frequency_bands)[i];
+          lv_bar_set_value(bar, value, LV_ANIM_ON);  // Animate bar height change
+
+          // Change bar color based on the value to simulate LED effect
+          if (value < 20) {
+            lv_obj_set_style_bg_color(bar, lv_color_make(0, 255, 0), LV_PART_INDICATOR);  // Green for very low values
+          } else if (value < 40) {
+            lv_obj_set_style_bg_color(bar, lv_color_make(0, 255, 255), LV_PART_INDICATOR);  // Cyan for low values
+          } else if (value < 60) {
+            lv_obj_set_style_bg_color(bar, lv_color_make(0, 0, 255), LV_PART_INDICATOR);  // Blue for mid-low values
+          } else if (value < 80) {
+            lv_obj_set_style_bg_color(bar, lv_color_make(255, 165, 0), LV_PART_INDICATOR);  // Orange for mid-high values
+          } else {
+            lv_obj_set_style_bg_color(bar, lv_color_make(255, 0, 0), LV_PART_INDICATOR);  // Red for high values
+          }
+        }
+
+
+
+
+
+  - interval: 16ms  # Intervalle pour une animation fluide
+    then:
+      - lambda: |-
+      
+          static const int base_radius = 50;  // Rayon de base du cercle
+          static const int center_x = 0;  // Centre en x
+          static const int center_y = 0;  // Centre en y
+          static float angle_offset = 0;  // Décalage d'angle
+
+          const float pi = 3.14159265358979323846;
+
+
+          float dynamic_radius = base_radius + (sin(millis() / 1000.0) * 20);  // Oscillation de +/- 20 autour du rayon de base
+
+
+          float angle_red = (millis() / 500.0) + angle_offset;
+          int red_x = center_x + dynamic_radius * cos(angle_red);
+          int red_y = center_y + dynamic_radius * sin(angle_red);
+          lv_obj_set_x(id(red_dot), red_x);
+          lv_obj_set_y(id(red_dot), red_y);
+
+
+          float angle_yellow = angle_red + (90 * pi / 180);  // 90 degrés en radians
+          int yellow_x = center_x + dynamic_radius * cos(angle_yellow);
+          int yellow_y = center_y + dynamic_radius * sin(angle_yellow);
+          lv_obj_set_x(id(yellow_dot), yellow_x);
+          lv_obj_set_y(id(yellow_dot), yellow_y);
+
+
+          float angle_green = angle_red + (180 * pi / 180);  // 180 degrés en radians
+          int green_x = center_x + dynamic_radius * cos(angle_green);
+          int green_y = center_y + dynamic_radius * sin(angle_green);
+          lv_obj_set_x(id(green_dot), green_x);
+          lv_obj_set_y(id(green_dot), green_y);
+
+
+          float angle_blue = angle_red + (270 * pi / 180);  // 270 degrés en radians
+          int blue_x = center_x + dynamic_radius * cos(angle_blue);
+          int blue_y = center_y + dynamic_radius * sin(angle_blue);
+          lv_obj_set_x(id(blue_dot), blue_x);
+          lv_obj_set_y(id(blue_dot), blue_y);
+
+
+          angle_offset += 0.02;  // Ajuster la vitesse de rotation si nécessaire
+
+
+############################################################ test #############################################################################################
+  
+  - interval: 1s
+    then:
+      - lambda: |-
+          auto time_remaining = id(time_remaining_0).state.c_str();
+          lv_label_set_text(id(time_remaining_label), time_remaining);
+
+
+
+
+  - interval: 1s  # Mise à jour toutes les 1 seconde
+    then:
+      - lambda: |-
+          static int progress = 0;
+          char buf[32];  // Déclaration de buf ici
+
+          progress += 20;  // Incrémente de 20 chaque seconde (pour un total de 5s)
+        
+          if (progress >= 100) {
+              lv_label_set_text(id(spinner_progress_label), "Flashing...");           
+              progress = 0;  // Réinitialiser après 100%
+              sprintf(buf, "Progress: %d%%", progress);
+          } else {
+              sprintf(buf, "Progress: %d%%", progress);  // Utilisation de buf ici
+              lv_label_set_text(id(spinner_progress_label), buf);                        
+              lv_bar_set_value(static_cast<lv_obj_t*>(id(progress_bar)), progress, LV_ANIM_ON);
+          }
+
+  #- interval: 16ms
+    #then:
+      #- script.execute: move_time_label    
+
+
+
+  #- interval: 1s
+    #then:
+      #- script.execute: capture_and_display_snapshot
+
+    #  - interval: 10s
+     #   then:
+      #    - lambda: |-
+       #       // Mettre à jour l'étiquette de température avec la valeur actuelle
+        #      id(temperature_label).set_text(id(sensor_tvoc).state + String(" °C"));
+
+         #     // Obtenir la température actuelle et la convertir en entier
+          #    float temp_value = atof(id(sensor_tvoc).state.c_str());
+           #   int new_bar_value = static_cast<int>(temp_value);
+
+            #  // Mettre à jour les barres pour simuler un graphique défilant
+             # static int bar_values[3] = {0, 0, 0}; // Stocke les valeurs des barres
+             # bar_values[2] = bar_values[1];
+             # bar_values[1] = bar_values[0];
+             # bar_values[0] = new_bar_value;
+
+              #// Appliquer les valeurs mises à jour aux barres
+              #id(temp_bar1).set_value(bar_values[0], LV_ANIM_OFF);
+              #id(temp_bar2).set_value(bar_values[1], LV_ANIM_OFF);
+              #id(temp_bar3).set_value(bar_values[2], LV_ANIM_OFF);
+############################## online image #################################
+http_request: 
+ verify_ssl: false 
+
+
+
+
+online_image:
+  - url: "https://github.com/youkorr/home-assistant-esp32-box-s3/blob/main/voice_assistant_gfx/loading.png"
+    format: png
+    type: ${local_image_format}
+    resize: 320x240
+    use_transparency: "true"
+    id: cctv_img
+    on_download_finished:
+      - delay: 5s
+      - lvgl.image.update:
+          id: cctv_img_lvgl
+          src: cctv_img
+         
+
+
+
+
+
+  
