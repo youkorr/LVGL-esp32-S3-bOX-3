@@ -1,0 +1,220 @@
+- platform: wifi_signal
+  id: wifi_signal_percent
+  update_interval: 30s
+  filters:
+    - lambda: return min(max(2 * (x + 100.0), 0.0), 100.0);
+  unit_of_measurement: "%"
+  on_value: 
+    then:
+      - lvgl.label.update:
+          id: wifi_status
+          text_color: !lambda |-
+            if (id(wifi_signal_percent).state > 0) {
+            return lv_color_hex(0x00FF00);
+            }
+            return lv_color_hex(0x333333);
+          text: !lambda |-
+            if (id(wifi_signal_percent).state > 0 && id(wifi_signal_percent).state < 26) {
+            return "${wifi_25}";
+            } else if (id(wifi_signal_percent).state > 25 && id(wifi_signal_percent).state < 51) {
+            return "${wifi_50}";
+            } else if (id(wifi_signal_percent).state > 50 && id(wifi_signal_percent).state < 76) {
+            return "${wifi_75}";
+            } else if (id(wifi_signal_percent).state > 75) {
+            return "${wifi_100}";
+            }
+            return "${wifi_100}";
+
+
+  # Thermostat temperature
+- platform: homeassistant
+  id: thermostat_id1
+  entity_id: climate.display_living_room_thermostat # Change the entity from your Home Assistant
+  attribute: temperature
+  on_value: 
+    then:
+      - lvgl.arc.update:
+          id: arc_idi
+          value: !lambda return x;
+
+      - lvgl.label.update:
+          id: target_temperature_whole
+          text: !lambda |-
+            static char buf[10];
+            int whole_part = static_cast<int>(id(thermostat_id1).state);
+            snprintf(buf, 10, "%d", whole_part);
+            return buf;
+
+      - lvgl.label.update:
+          id: target_temperature_fraction
+          text: !lambda |-
+            static char buf[10];
+            int whole_part = static_cast<int>(id(thermostat_id1).state);
+            int fractional_part = static_cast<int>((id(thermostat_id1).state - whole_part) * 10);
+            snprintf(buf, 10, ".%01d", fractional_part);
+            return buf;              
+
+  # Weather temperature
+- platform: homeassistant
+  id: weather_temp
+  entity_id: weather.forecast_maison # Change the entity from your Home Assistant
+  attribute: temperature
+  on_value: 
+    then:
+      - lvgl.label.update:
+          id: weather_temperature
+          text:
+            format: "%.0f°"
+            args: [id(weather_temp).state]
+
+
+  # Temperature Home Sensor
+- platform: homeassistant
+  id: sensor_temperature
+  entity_id: sensor.temp_entree_temperature # Change the entity from your Home Assistant
+  on_value:
+    then:
+      - lvgl.label.update:
+          id: sensor_temperature_thermostat
+          text:
+            format: "%.1f°C"
+            args: [id(sensor_temperature).state]
+              
+      - lvgl.label.update:
+          id: temperature_sensor
+          text:
+            format: "%.1f °C"
+            args: [id(sensor_temperature).state]
+
+      - lvgl.arc.update:
+          id: arc_sensor_temp
+          value: !lambda return x;
+
+  # Humidity Home Sensor
+- platform: homeassistant
+  id: sensor_humidity
+  entity_id: sensor.temp_entree_humidity # Change the entity from your Home Assistant
+  on_value:
+    then:
+      - lvgl.label.update:
+          id: humidity_sensor
+          text:
+            format: "%.1f %%" 
+            args: [id(sensor_humidity).state]
+
+
+- platform: homeassistant
+  id: electricity_sensor
+  entity_id: sensor.0x187a3efffe476f26_energy
+
+         
+
+- platform: adc
+  pin: GPIO10
+  name: "Battery voltage"
+  id: battery_voltage
+  unit_of_measurement: "V"
+  accuracy_decimals: 1
+  device_class: "voltage"
+  entity_category: "diagnostic"
+  disabled_by_default: true
+  update_interval: 30s
+  attenuation: auto
+  filters:
+      - multiply: 4.11
+
+- platform: copy
+  id: battery_percent
+  source_id: battery_voltage
+  name: "Battery level"
+  unit_of_measurement: "%"
+  accuracy_decimals: 0
+  device_class: "battery"
+  entity_category: "diagnostic"
+  filters:
+    - lambda: return (x - 2.7) / (4.2 - 2.7) * 100;
+    - clamp:
+        min_value: 0
+        max_value: 100    
+  on_value:
+    - lvgl.label.update:
+        id: lbl_battery_status
+        text: !lambda |-
+          static char buf[10];
+          std::string icon;
+          if (x == 100.0) {
+              icon = "\U000F0079"; // mdi-battery (full)
+          } else if (x > 90) {
+              icon = "\U000F0082"; // mdi-battery-90
+          } else if (x > 80) {
+              icon = "\U000F0081"; // mdi-battery-80
+          } else if (x > 70) {
+              icon = "\U000F0080"; // mdi-battery-70
+          } else if (x > 60) {
+              icon = "\U000F007F"; // mdi-battery-60
+          } else if (x > 50) {
+              icon = "\U000F007E"; // mdi-battery-50
+          } else if (x > 40) {
+              icon = "\U000F007D"; // mdi-battery-40
+          } else if (x > 30) {
+              icon = "\U000F007C"; // mdi-battery-30
+          } else if (x > 20) {
+              icon = "\U000F007B"; // mdi-battery-20
+          } else if (x > 10) {
+              icon = "\U000F007A"; // mdi-battery-10
+          } else if (x > 0) {
+              icon = "\U000F008E"; // mdi-battery-outline
+          } else {
+              icon = "\U000F0091"; // mdi-battery-unknown
+          }
+          snprintf(buf, sizeof(buf), "%s", icon.c_str());
+          return buf;         
+
+
+- platform: homeassistant
+  id: media_player_volume
+  entity_id: media_player.display_s3_box_media_player
+  attribute: volume_level
+  internal: true   
+
+
+
+
+
+- platform: homeassistant
+  id: main_light_brightness
+  entity_id: light.eclairage_entree_1_2               
+  attribute: brightness
+  on_value:
+    - lvgl.slider.update:
+        id: light_main_brightness_slider
+        value: !lambda return x;
+    - lvgl.label.update:
+        id: light_main_brightness_percent
+        text:
+            format: "%.0f %%"
+            args: [id(main_light_brightness).state]
+
+           
+
+ 
+
+
+
+    # Light Main Kelvin
+  #- platform: homeassistant
+    #id: main_light_kelvin
+    #entity_id: light.cbe_rgbcw_wi_fi_bluetooth_light # Change the entity from your Home Assistant
+    #attribute: color_temp_kelvin
+    #on_value:
+      #- lvgl.slider.update:
+          #id: light_main_kelvin_slider
+          #value: !lambda return x;
+      #- lvgl.label.update:
+          #id: light_main_kelvin_state
+          #text:
+              #format: "%.0f K"
+              #args: [id(main_light_kelvin).state]                             
+
+       
+
