@@ -1,0 +1,2567 @@
+
+  displays:
+    - my_display
+  touchscreens:
+    - touchscreen_id: gt911_touchscreen
+      long_press_time: 5000ms
+      long_press_repeat_time: 400ms
+
+  style_definitions:
+    #- id: header_footer
+      #bg_color: 0x444444
+      #bg_grad_color: 0x444444
+      #bg_grad_dir: VER
+      #bg_opa: COVER
+      #border_width: 0
+      #radius: 0
+      #pad_all: 0
+      #border_color: 0x333333
+      #text_color: 0xFFFFFF
+      #width: 100%
+      #height: 40
+
+    - id: home_page
+      bg_opa: TRANSP
+      border_opa: TRANSP
+      radius: 0
+      text_color: 0xFFFFFF
+      width: 100%
+      height: 100%
+
+    - id: controls_page
+      bg_opa: TRANSP
+      border_opa: TRANSP
+      radius: 0
+      text_color: 0xFFFFFF
+      width: 100%
+      height: 100%  
+
+    - id: main_content
+      bg_opa: TRANSP
+      border_opa: TRANSP
+      radius: 0
+      text_color: 0xFFFFFF
+      width: 100%
+      height: 100%
+
+    - id: f1_page
+      bg_opa: TRANSP
+      border_opa: TRANSP
+      radius: 0
+      text_color: 0xFFFFFF
+      width: 100%
+      height: 100%
+
+    - id: style_line
+      line_color: 0x0000FF
+      line_width: 8
+      line_rounded: true
+    - id: date_style
+      text_font: roboto_bold_24
+      align: center
+      text_color: 0x333333
+      bg_opa: cover
+      radius: 4
+      pad_all: 2
+
+####Header_Footer##########
+    - id: header_footer
+      bg_color: 0x2F8CD8
+      bg_grad_color: 0x005782
+      bg_grad_dir: VER
+      bg_opa: COVER
+      border_width: 0
+      radius: 0
+      pad_all: 0
+      pad_row: 0
+      pad_column: 0
+      border_color: 0x0077b3
+      text_color: 0xFFFFFF
+      width: 100%
+      height: 30
+  pages:
+    - id: page_home
+      bg_color: color_black
+      widgets:
+        - image:
+            src: bg_img_3
+            id: img_id 
+
+        - label:
+            id: lbl_battery_status
+            align: TOP_LEFT
+            y: 5
+            x: 180
+            text_color: color_blue
+            text_font: battery_icons_24
+            text: "\U000F0091"            
+      # Alarm status
+        - label:
+            id: alarme_status
+            align: TOP_RIGHT
+            x: -40
+            y: 5
+            text: "${arming}"
+            text_color: color_red
+            text_font: mdi24
+          
+      # Motion status
+        - label:
+            id: wifi_status
+            align: TOP_RIGHT
+            x: -15
+            y: 5
+            text: "${wifi_100}"
+            text_color: color_dark_gray
+            text_font: icons_24
+            
+        - label:
+            id: ha_status
+            align: TOP_RIGHT
+            x: -65
+            y: 5
+            text: "${ha}"
+            text_color: color_dark_gray
+            text_font: icons_24
+
+        - label:
+            id: motion_status
+            align: TOP_RIGHT
+            x: -90
+            y: 5
+            text: "${motion}"
+            text_color: color_dark_gray
+            text_font: icons_24      
+        # TIME
+        - label:
+            id: display_time
+            align: TOP_LEFT
+            x: 110
+            y: 70
+            text_font: nunito_48
+            text_color: color_cyan
+            text: "23:59"
+
+      # DATE
+        - label:
+            id: display_date
+            x: 165
+            y: 120
+            align: TOP_LEFT
+            text_font: nunito_18
+            text_color: color_white
+            text: "01 June"
+
+      # DAY OF WEEK
+        - label:
+            id: display_day
+            align: TOP_LEFT
+            x: 85
+            y: 60
+            text_font: nunito_18
+            text_color: color_white
+            text: "Sunday"
+
+      # WEATHER ICON  
+        - animimg:
+            id: weather_rainy
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ rainy0, rainy1, rainy2, rainy3, rainy4, rainy5, rainy6, rainy7, rainy8, rainy9, rainy10, rainy11]
+            duration: 1200ms
+        - animimg:
+            id: weather_pouring
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ pouring0, pouring1, pouring2, pouring3, pouring4, pouring5, pouring6, pouring7, pouring8, pouring9, pouring10, pouring11 ]
+            duration: 400ms
+        - animimg:
+            id: weather_lightning_rainy
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ lightning_rainy0, rainy1, lightning_rainy1, rainy3, rainy4, rainy5, rainy6, rainy7, rainy8, rainy9, rainy10, rainy11,
+                    lightning_rainy2, rainy1, lightning_rainy3, rainy3, rainy4, rainy5, rainy6, rainy7, rainy8, rainy9, rainy10, rainy11
+                  ]
+            duration: 1500ms
+        - animimg:
+            id: weather_snowy_rainy
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ snowy_rainy0, snowy_rainy1, snowy_rainy2, snowy_rainy3, snowy_rainy4, snowy_rainy5, snowy_rainy6, snowy_rainy7, snowy_rainy8,
+                    snowy_rainy9, snowy_rainy10, snowy_rainy11
+                  ]
+            duration: 1200ms
+        - animimg:
+            id: weather_snowy
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ snowy0, snowy1, snowy2, snowy3, snowy4, snowy5, snowy6, snowy7, snowy8, snowy9, snowy10, snowy11 ]
+            duration: 1200ms
+        - button:
+            id: weather_sunny
+            hidden: true
+            pad_all: 0
+            width: 100
+            height: 100
+            x: 7
+            y: 5
+            bg_opa: TRANSP
+            shadow_opa: TRANSP
+            widgets:
+              - image:
+                  src: sunny
+        - button:
+            id: weather_clear_night
+            hidden: true
+            pad_all: 0
+            width: 100
+            height: 100
+            x: 7
+            y: 5
+            bg_opa: TRANSP
+            shadow_opa: TRANSP
+            widgets:
+              - image:
+                  src: clear_night
+        - animimg:
+            id: weather_hail
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ hail0, hail1, hail2, hail3, hail4, hail5, hail6, hail7, hail8, hail9, hail10, hail11 ]
+            duration: 1200ms
+        - animimg:
+            id: weather_partlycloudy_sun
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ partlycloudy_sun0, partlycloudy_sun1, partlycloudy_sun2, partlycloudy_sun3, partlycloudy_sun4, partlycloudy_sun5, partlycloudy_sun6, 
+                    partlycloudy_sun7, partlycloudy_sun6, partlycloudy_sun5, partlycloudy_sun4, partlycloudy_sun3, partlycloudy_sun2, partlycloudy_sun1 
+                  ]
+            duration: 2600ms
+        - animimg:
+            id: weather_partlycloudy_moon
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ partlycloudy_moon0, partlycloudy_moon1, partlycloudy_moon2, partlycloudy_moon3, partlycloudy_moon4, partlycloudy_moon5, partlycloudy_moon6,
+                    partlycloudy_moon7, partlycloudy_moon6, partlycloudy_moon5, partlycloudy_moon4, partlycloudy_moon3, partlycloudy_moon2, partlycloudy_moon1 
+                  ]
+            duration: 2600ms
+        - animimg:
+            id: weather_windy
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ windy0, windy1, windy2, windy3, windy2, windy1 ]
+            duration: 1000ms
+        - animimg:
+            id: weather_windy_variant
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ windy_variant0, windy_variant1, windy_variant2, windy_variant3, windy_variant2, windy_variant1 ]
+            duration: 1000ms
+        - animimg:
+            id: weather_lightning
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ lightning0, lightning1, lightning1, lightning1, 
+                    lightning0, lightning1, lightning1, lightning1, 
+                    lightning1, lightning1, lightning1, lightning1, 
+                    lightning2, lightning3, lightning3, lightning3, 
+                    lightning2, lightning3, lightning3, lightning3, 
+                    lightning3, lightning3, lightning3, lightning3, 
+                    lightning3, lightning3, lightning3, lightning3, 
+                    lightning3, lightning3, lightning3, lightning3
+                  ]
+            duration: 2000ms
+        - animimg:
+            id: weather_fog
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ fog0, fog1, fog2, fog3, fog4, fog5, fog6, fog7, fog8, fog9, fog10, fog11, fog12, fog11, fog10, fog9, fog8, fog7, fog6, fog5, fog4, fog3, fog2, fog1 ]
+            duration: 5000ms
+        - animimg:
+            id: weather_cloudy
+            hidden: true
+            x: 7
+            y: 5
+            align: TOP_LEFT
+            src: [ cloudy0, cloudy1, cloudy2, cloudy3, cloudy2, cloudy1 ]
+            duration: 600ms
+
+
+      # WEATHER TEMPERATURE
+        - button:
+            width: 100
+            height: 36
+            x: 38
+            y: 5
+            bg_opa: TRANSP
+            shadow_opa: TRANSP
+            align: TOP_LEFT
+            widgets:          
+              - label:
+                  align: CENTER
+                  id: weather_temperature
+                  text_font: nunito_30
+                  text_color: color_white
+  
+
+        #- label:
+            #id: climate_description
+            #x: 30
+            #y: -27
+            #align: LEFT_MID
+            #text_font: nunito_18
+            #text_color: color_dark_gray
+          
+
+        # Home temperature icon
+        - label:
+            x: 10
+            y: 135
+            align: TOP_LEFT
+            text_font: icons_36
+            text_color: color_green
+            text: "${temperature}"
+        # Home temperature state
+        - label:
+            id: temperature_sensor
+            x: 50
+            y: 145
+            align: TOP_LEFT
+            text_font: nunito_18
+            text_color: color_white
+            text: " "
+
+        # Home humidity icon
+        - label:
+            x: 10
+            y: 170
+            align: TOP_LEFT
+            text_font: icons_36
+            text_color: color_dark_blue
+            text: "${humidity}"
+      # Home humidity state
+        - label:
+            id: humidity_sensor
+            x: 50
+            y: 175
+            align: TOP_LEFT
+            text_font: nunito_18
+            text_color: color_white
+            text: " "
+
+        # Home co2 icon
+        #- label:
+           # x: 10
+           # y: 120
+            #align: TOP_LEFT
+            #text_font: icons_36
+            #text_color: color_deep_orange
+            #text: "${co2}"
+        # Home co2 state
+        #- label:
+            #id: co2_sensor
+            #x: 80
+            #y: 100
+            #align: LEFT_MID
+            #text_font: nunito_18
+            #text_color: color_white
+            #text: " "
+
+        # Home tvoc icon
+        - label:
+            x: 10
+            y: 200
+            align: TOP_LEFT
+            text_font: icons_36
+            text_color: color_mint
+            text: "${tvoc}"
+        # Home tvoc state
+        - label:
+            id: tvoc_sensor
+            x: 55
+            y: 210
+            align: TOP_LEFT
+            long_mode: DOT
+            text_font: nunito_18
+            text_color: color_white
+            text: " "
+
+        # Home lux icon
+        #- label:
+            #x: 10
+            #y: 180
+            #align: TOP_LEFT
+            #text_font: icons_36
+            #text_color: color_yellow
+            #text: "${illumination}"
+        # Home lux state
+        #- label:
+            #id: lux_sensor
+            #x: 80
+            #y: 180
+            #align: LEFT_MID
+            #text_font: nunito_18
+            #text_color: color_white
+            #text: " "
+        - button:
+            id: button_HA
+            bg_color: color_black
+            shadow_color: color_blue
+            shadow_spread: 2
+            shadow_width: 15
+            shadow_opa: 100%
+            width: 60
+            height: 60
+            align: TOP_RIGHT
+            x: -10
+            y: 160
+            widgets:
+              - label:
+                  align: CENTER
+                  text_font: icons_60  # Taille de l'icône
+                  text_color: color_blue
+                  text: "${ha}"  # Remplacez par une icône représentant Home Assistant ou HA
+            on_press:
+              then:
+                - lvgl.page.show: 
+                    id: page_HA
+                    animation: OUT_RIGHT
+                    time: 300ms
+#################################################### 1 PREMIERE PAGE ###############################          
+    - id: page_HA
+      bg_color: color_black
+      widgets:
+        - image:
+            src: bg_img_3
+            id: img_id1 
+
+
+           # Heating status
+        - label:
+            id: heating_status
+            align: TOP_RIGHT
+            x: -70
+            y: 5
+            text: "${heating}"
+            text_color: color_dark_gray
+            text_font: icons_24     
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            width: 300
+            height: 170
+            align: CENTER
+            x: 0
+            y: 0
+            layout:
+              pad_row: 18
+              pad_column: 30
+              type: GRID
+              grid_columns: [FR(1), FR(1)]
+              grid_rows: [FR(1), FR(1)]       
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            width: 300
+            height: 200
+            align: CENTER
+            x: 0
+            y: 20
+            layout:
+              pad_row: 18
+              pad_column: 18
+              type: GRID
+              grid_columns: [FR(1), FR(1)]
+              grid_rows: [FR(1), FR(1), FR(1)]
+            widgets:
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_crimson
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: icons_36
+                        text_color: color_crimson
+                        text: "${thermostat}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_thermostat
+                            animation: OUT_RIGHT
+                            time: 300ms
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_blue
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi30
+                        text_color: color_blue
+                        text: "${alarm_away}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_alarm
+                            animation: OUT_RIGHT
+                            time: 300ms 
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_yellow
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: icons_36
+                        text_color: color_yellow
+                        text: "${lights}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_lights
+                            animation: OUT_RIGHT
+                            time: 300ms 
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_orange
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi30
+                        text_color: color_orange
+                        text: "${music}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_screensaver
+                            animation: OUT_RIGHT
+                            time: 300ms
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_green
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi30
+                        text_color: color_green
+                        text: "${sound}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_lcars
+                            animation: OUT_RIGHT
+                            time: 300ms
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_violet
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: icons_36
+                        text_color: color_violet
+                        text: "${settings}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_settings
+                            animation: OUT_RIGHT
+                            time: 300ms  
+
+
+
+
+  ################################################################### THERMOSTAT PAGE ##########################################################################################
+    - id: page_thermostat
+      bg_color: color_black
+      widgets:
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            shadow_opa: TRANSP
+            width: 288
+            height: 288
+            y: -5  # Move the thermostat slightly higher by adjusting the y position
+            align: CENTER  # Center the entire thermostat widget
+            widgets:
+              - meter:
+                  height: 192
+                  width: 192
+                  border_width: 0
+                  bg_opa: TRANSP
+                  align: CENTER
+                  scales:
+                    - range_from: 5
+                      range_to: 45
+                      angle_range: 270
+                      ticks:
+                        width: 1
+                        count: 41
+                        length: 6
+                        color: color_white
+                        major:
+                          stride: 5
+                          width: 3
+                          length: 9
+                          color: color_white
+                          label_gap: 9
+                      indicators:
+                        - tick_style:
+                            start_value: 5
+                            end_value: 45
+                            color_start: color_blue
+                            color_end: color_crimson
+                            width: 1
+
+              - arc:
+                  id: arc_idi
+                  align: CENTER
+                  arc_width: 21
+                  width: 220
+                  height: 220
+                  min_value: 5
+                  max_value: 45
+                  adjustable: true
+                  adv_hittest: true
+                  arc_opa: TRANSP
+                  indicator:
+                    arc_color: color_deep_orange
+                    arc_width: 15
+                  knob:
+                    border_color: color_deep_orange
+                    border_width: 3
+                    bg_color: color_amber
+                  on_release:
+                    - homeassistant.service:
+                        service: climate.set_temperature
+                        data:
+                          entity_id: climate.display_living_room_thermostat
+                          temperature: !lambda return x;
+
+              - arc:
+                  id: arc_sensor_temp
+                  clickable: false
+                  align: CENTER
+                  arc_width: 11
+                  width: 120
+                  height: 120
+                  min_value: 5
+                  max_value: 45
+                  value: 11
+                  adjustable: true
+                  arc_opa: TRANSP
+                  indicator:
+                    arc_opa: TRANSP
+                  knob:
+                    border_opa: TRANSP
+                    bg_color: color_white
+
+
+              - obj:
+                  align: CENTER
+                  bg_color: color_black
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  width: 132
+                  height: 132
+                  radius: 66
+
+              - label:
+                  id: heating_icon
+                  y: 24
+                  align: CENTER
+                  text_font: icons_24
+                  text: "${empty}"
+
+              - label:
+                  id: thermostat_status
+                  y: -48
+                  x: 0
+                  align: CENTER
+                  text_font: nunito_24
+                  text_color: color_white
+                  text: " "
+
+              - label:
+                  id: target_temperature_whole
+                  x: 107
+                  y: 105
+                  align: TOP_LEFT
+                  text_font: nunito_30
+                  text_color: color_blue
+                  text: " "
+        
+              - label:
+                  id: target_temperature_fraction
+                  x: 148
+                  y: -3
+                  align: LEFT_MID
+                  text_font: nunito_30
+                  text_color: color_white
+                  text: " "
+
+              - label:
+                  id: target_temperature_measurement
+                  x: 147
+                  y: -24
+                  align: LEFT_MID
+                  text_font: nunito_18
+                  text_color: color_white
+                  text: "°C"
+
+              - label:
+                  id: sensor_temperature_thermostat_icon
+                  y: 165
+                  x: 85
+                  align: TOP_LEFT
+                  text_font: icons_24
+                  text_color: color_green
+                  text: "${temperature}"
+
+              - label:
+                  id: sensor_temperature_thermostat
+                  y: 48
+                  x: 6
+                  align: CENTER
+                  text_font: nunito_18
+                  text_color: color_white
+                  text: "0"
+
+              - button:
+                  x: 50
+                  y: -10
+                  width: 48
+                  height: 48
+                  bg_color: color_black
+                  border_color: color_gray
+                  border_width: 3
+                  shadow_opa: TRANSP
+                  radius: 21
+                  align: BOTTOM_MID
+                  widgets:
+                    - label:
+                        y: -1
+                        align: CENTER
+                        text_font: nunito_42
+                        text_color: color_gray
+                        text: "+"
+                  on_press:
+                      then:
+                        - lambda: |-
+                            auto temp = id(thermostat_id1).state + 0.5;
+                            id(thermostat_id1).publish_state(temp);
+                        - homeassistant.service:
+                            service: climate.set_temperature
+                            data:
+                              entity_id: climate.display_living_room_thermostat
+                              temperature: !lambda 'return id(thermostat_id1).state;'
+
+              - button:
+                  x: -50
+                  y: -10
+                  width: 48
+                  height: 48
+                  bg_color: color_black
+                  border_color: color_gray
+                  border_width: 2
+                  shadow_opa: TRANSP
+                  radius: 21
+                  align: BOTTOM_MID
+                  widgets:
+                    - label:
+                        y: -1
+                        align: CENTER
+                        text_font: nunito_42
+                        text_color: color_gray
+                        text: "-"
+                  on_press:
+                      then:
+                        - lambda: |-
+                            auto temp = id(thermostat_id1).state - 0.5;
+                            id(thermostat_id1).publish_state(temp);
+                        - homeassistant.service:
+                            service: climate.set_temperature
+                            data:
+                              entity_id: climate.display_living_room_thermostat
+                              temperature: !lambda 'return id(thermostat_id1).state;'            
+
+        - button:
+            bg_opa: TRANSP
+            shadow_opa: TRANSP
+            align: BOTTOM_LEFT
+            widgets:
+              - label:
+                  text_font: montserrat_22
+                  text_color: color_amber
+                  text: "\uF015"
+            on_press:
+              then:
+                - lvgl.page.show: 
+                    id: page_HA
+                    animation: OUT_RIGHT
+                    time: 300ms
+
+  ########################################################################## PAGE ALARM ########################################################################################
+    - id: page_alarm
+      bg_color: color_gray
+      widgets:
+          - obj:
+              id: alarm_code
+              align: TOP_MID
+              y: 14
+              width: 100
+              height: 25
+              bg_color: 0xFFFFFF
+              shadow_color: 0
+              shadow_opa: 50%
+              radius: 5
+              widgets:
+                - label:
+                    id: label_alarm_code
+                    align: CENTER
+                    text_align: CENTER
+                    text: "Code + \uF00C"
+                    text_color: sec_color
+          - buttonmatrix:
+              id: key_alarm
+              align: TOP_MID
+              y: 35
+              width: 260
+              height: 210
+              border_opa: TRANSP
+              bg_opa: TRANSP
+              items:
+                bg_color: color_red
+                text_color: color_white
+                shadow_opa: TRANSP
+                pressed:
+                  bg_color: nova_color
+                  text_color: sec_color
+              one_checked: true
+              rows:
+                - buttons:
+                    - <<: &hidden
+                        text: 0
+                        width: 1
+                        control:
+                          hidden: true
+                    - text: 1
+                      <<: &keybutton
+                        width: 2
+                        control:
+                          no_repeat: true
+                          recolor: true
+                    - text: 2
+                      <<: *keybutton
+                    - text: 3
+                      <<: *keybutton
+                    - <<: *hidden
+                - buttons:
+                    - text: 4
+                      <<: *keybutton
+                    - text: 5
+                      <<: *keybutton
+                    - text: 6
+                      <<: *keybutton
+                    - text: 7
+                      <<: *keybutton
+                - buttons:
+                    - <<: *hidden
+                    - text: 8
+                      <<: *keybutton
+                    - text: 9
+                      <<: *keybutton
+                    - text: 0
+                      <<: *keybutton
+                    - <<: *hidden
+                - buttons:
+                    - text: "ARM"
+                      key_code: "A"  # Arm button
+                      <<: *keybutton
+                      width: 4  # Agrandir ARM
+                    - <<: *hidden  # Espace caché pour décaler CLEAR
+                    - text: "CLEAR"
+                      key_code: "*"  # Clear button
+                      <<: *keybutton
+                      width: 4
+                    - <<: *hidden  # Espace caché pour décaler DISARM
+                    - text: "DISARM"
+                      key_code: "D"  # Disarm button
+                      <<: *keybutton
+                      width: 4  # Agrandir DISARM   
+
+    
+  ###################################################################### PAGE LIGHTS ###########################################################################################
+    - id: page_lights
+      styles: header_footer
+      #bg_color: color_black
+      widgets:
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            shadow_opa: TRANSP
+            pad_all: 0
+            width: 170
+            height: 240
+            align: LEFT_MID
+            layout:
+              pad_column: 0
+              pad_row: 0
+              type: GRID
+              grid_columns: [FR(1), FR(1)]
+              grid_rows: [FR(1), FR(1), FR(1)]
+            widgets:
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - button:
+                        id: button_1
+                        width: 52
+                        height: 52
+                        align: CENTER
+                        radius: 30
+                        shadow_color: color_crimson
+                        shadow_spread: 2
+                        shadow_width: 25
+                        shadow_opa: 100%
+                        border_color: color_dark_gray
+                        border_width: 10
+                        on_click:
+                          - homeassistant.service:
+                              service: light.toggle
+                              data:
+                                entity_id: light.eclairage_entree_1
+                          - homeassistant.service:
+                              service: light.toggle
+                              data:
+                                entity_id: light.eclairage_entree_2
+
+
+
+                    - label:
+                        id: light_1_lvgl
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_white
+                        text: "${light_mut}"
+
+
+              - button:
+                  bg_opa: TRANSP
+                  shadow_opa: TRANSP
+                  border_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - button:
+                        id: button_2
+                        width: 52
+                        height: 52
+                        align: CENTER
+                        radius: 30
+                        shadow_color: color_crimson
+                        shadow_spread: 2
+                        shadow_width: 25
+                        shadow_opa: 100%
+                        border_color: color_dark_gray
+                        border_width: 10
+                        on_press:
+                          - homeassistant.service:
+                              service: light.toggle
+                              data:
+                                entity_id: light.eclairage_escalier
+
+
+                                
+
+
+                    - label:
+                        id: light_2_lvgl
+                        align: CENTER
+                        text_font: icons_36
+                        text_color: color_white
+                        text: "${lights}"
+
+              - button:
+                  bg_opa: TRANSP
+                  shadow_opa: TRANSP
+                  border_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - button:
+                        id: button_3
+                        width: 52
+                        height: 52
+                        align: CENTER
+                        radius: 30
+                        shadow_color: color_crimson
+                        shadow_spread: 2
+                        shadow_width: 25
+                        shadow_opa: 100%
+                        border_color: color_dark_gray
+                        border_width: 10
+                        on_press:
+                          - homeassistant.service:
+                              service: light.toggle
+                                
+
+
+             
+
+                    - label:
+                        id: light_3_lvgl
+                        align: CENTER
+                        text_font: icons_36
+                        text_color: color_white
+                        text: "${lights}"
+
+              - button:
+                  bg_opa: TRANSP
+                  shadow_opa: TRANSP
+                  border_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - button:
+                        id: light_4
+                        width: 52
+                        height: 52
+                        align: CENTER
+                        radius: 30
+                        shadow_color: color_crimson
+                        shadow_spread: 2
+                        shadow_width: 25
+                        shadow_opa: 100%
+                        border_color: color_dark_gray
+                        border_width: 10
+                        on_press:
+                          - homeassistant.service:
+                              service: switch.toggle
+
+
+
+                    - label:
+                        id: light_4_lvgl
+                        align: CENTER
+                        text_font: icons_36
+                        text_color: color_white
+                        text: "${lights}"
+
+
+              - button:
+                  bg_opa: TRANSP
+                  shadow_opa: TRANSP
+                  border_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - button:
+                        id: light_5
+                        width: 52
+                        height: 52
+                        align: CENTER
+                        radius: 30
+                        shadow_color: color_crimson
+                        shadow_spread: 2
+                        shadow_width: 25
+                        shadow_opa: 100%
+                        border_color: color_dark_gray
+                        border_width: 10
+                        on_press:
+                          - homeassistant.service:
+                              service: light.toggle
+
+     
+  
+                    - label:
+                        id: light_5_lvgl
+                        align: CENTER
+                        text_font: icons_36
+                        text_color: color_white
+                        text: "${lights}"
+
+
+
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            shadow_opa: TRANSP
+            width: 180
+            height: 180
+            y: -5 
+            align: RIGHT_MID 
+            widgets:
+              - slider:
+                  id: light_main_brightness_slider
+                  radius: 10
+                  bg_color: color_blue
+                  align: CENTER
+                  width: 36
+                  height: 100
+                  min_value: 1
+                  max_value: 200
+                  #indicator:
+                    #bg_color: color_amber
+                    #radius: 10
+                  knob:
+                    bg_color: White
+                    radius: 2px
+                    pad_left: -3px
+                    pad_right: -3px
+                    pad_top: -18px
+                    pad_bottom: -18px
+                  indicator:
+                    radius: 0px
+                    bg_color: color_amber
+                  on_release:
+                      - homeassistant.service:
+                          service: light.turn_on
+                          data:
+                            entity_id: light.eclairage_entree_1
+                            brightness: !lambda return int(x);
+                      - homeassistant.service:
+                          service: light.turn_on
+                          data:
+                            entity_id: light.eclairage_entree_2
+                            brightness: !lambda return int(x);
+
+
+
+
+              - label:
+                  id: light_main_brightness_percent
+                  align: BOTTOM_MID
+                  text_font: nunito_18
+                  text_color: color_white
+                  text: "100%"
+
+              - label:
+                  align: TOP_MID
+                  text_font: nunito_18
+                  text_color: color_white
+                  text: "ENTREE"    
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+
+   
+
+
+                       
+
+
+########################################################################## page spectrum ######################################################################################
+    - id: page_spectrum
+      bg_color: color_black
+      widgets:
+        - bar:
+            id: spectrum_bar_0
+            width: 15
+            height: 100
+            min_value: 0
+            max_value: 100
+            value: 0
+            bg_color: color_black
+            indicator:
+              bg_color: color_cyan
+            align: CENTER
+            x: -61
+            y: -24
+
+
+        - bar:
+            id: spectrum_bar_1
+            width: 15
+            height: 100
+            min_value: 0
+            max_value: 100
+            value: 0
+            bg_color: color_black
+            indicator:
+              bg_color: color_navy
+            align: CENTER
+            x: -41
+            y: -24
+
+        - bar:
+            id: spectrum_bar_2
+            width: 15
+            height: 100
+            min_value: 0
+            max_value: 100
+            value: 0
+            bg_color: color_black
+            indicator:
+              bg_color: color_yellow
+            align: CENTER
+            x: -21
+            y: -24
+          
+        - bar:
+            id: spectrum_bar_3
+            width: 15
+            height: 100
+            min_value: 0
+            max_value: 100
+            value: 0
+            bg_color: color_black
+            indicator:
+              bg_color: color_green
+            align: CENTER
+            x: -5
+            y: -24
+
+        - bar:
+            id: spectrum_bar_4
+            width: 15
+            height: 100
+            min_value: 0
+            max_value: 100
+            value: 0
+            bg_color: color_black
+            indicator:
+              bg_color: color_cyan
+            align: CENTER
+            x: 19
+            y: -24
+
+        - bar:
+            id: spectrum_bar_5
+            width: 15
+            height: 100
+            min_value: 0
+            max_value: 100
+            value: 0
+            bg_color: color_black
+            indicator:
+              bg_color: color_blue
+            align: CENTER
+            x: 39
+            y: -24
+
+        - bar:
+            id: spectrum_bar_6
+            width: 15
+            height: 100
+            min_value: 0
+            max_value: 100
+            value: 0
+            bg_color: color_black
+            indicator:
+              bg_color: color_violet
+            align: CENTER
+            x: 59
+            y: -24
+
+        - bar:
+            id: spectrum_bar_7
+            width: 15
+            height: 100
+            min_value: 0
+            max_value: 100
+            value: 0
+            bg_color: color_black
+            indicator:
+              bg_color: color_magenta
+            align: CENTER
+            x: 79
+            y: -24     
+
+
+ 
+    - id: page_lcars
+      bg_color: color_black
+      widgets:
+        - image:
+            src: bg_img_5
+        - label:
+            id: voice_response_label
+            text_font: my_font1
+            text_color: color_amber
+            align: BOTTOM_MID
+            y: -10          
+   
+########################################################### screensaver #################################################################################################
+    - id: page_screensaver
+      bg_color: color_black
+      widgets:
+        - label:
+            id:  display_time_blank1
+            text_font: nunito_42
+            text_color: color_white
+            x: 10
+            y: 10
+            text: "23:59" 
+
+        - bar:
+            id: red_dot
+            width: 40
+            height: 40
+            min_value: 0
+            max_value: 100
+            value: 100
+            bg_color: color_black
+            indicator:
+              bg_color: color_red
+            align: CENTER
+            x: -60
+            y: 0
+
+          # Deuxième point coloré (jaune)
+        - bar:
+            id: yellow_dot
+            width: 40
+            height: 40
+            min_value: 0
+            max_value: 100
+            value: 100
+            bg_color: color_black
+            indicator:
+              bg_color: color_yellow
+            align: CENTER
+            x: -20
+            y: 0
+
+          # Troisième point coloré (vert)
+        - bar:
+            id: green_dot
+            width: 40
+            height: 40
+            min_value: 0
+            max_value: 100
+            value: 100
+            bg_color: color_black
+            indicator:
+              bg_color: color_green
+            align: CENTER
+            x: 20
+            y: 0
+
+          # Quatrième point coloré (bleu)
+        - bar:
+            id: blue_dot
+            width: 40
+            height: 40
+            min_value: 0
+            max_value: 100
+            value: 100
+            bg_color: color_black
+            indicator:
+              bg_color: color_blue
+            align: CENTER
+            x: 60
+            y: 0
+
+                     
+
+################################################################################################################################################################################### 
+######################################################### NEW SETTINGS PAGE #######################################################################################################
+    - id: page_settings
+      styles: header_footer
+      #bg_color: color_black
+      widgets:
+        - image:
+            src: bg_img_3
+            id: img_id3 
+  
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            width: 300
+            height: 170
+            align: CENTER
+            x: 0
+            y: 0
+            layout:
+              pad_row: 18
+              pad_column: 30
+              type: GRID
+              grid_columns: [FR(1), FR(1)]
+              grid_rows: [FR(1), FR(1)]       
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            width: 300
+            height: 200
+            align: CENTER
+            x: 0
+            y: 20
+            layout:
+              pad_row: 18
+              pad_column: 18
+              type: GRID
+              grid_columns: [FR(1), FR(1)]
+              grid_rows: [FR(1), FR(1), FR(1)]
+            widgets:
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_crimson
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_crimson
+                        text: "${tools}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_timer_finished
+                            animation: OUT_RIGHT
+                            time: 300ms
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_blue
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_blue
+                        text: "${cctv}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: test_page
+                            animation: OUT_RIGHT
+                            time: 300ms 
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_yellow
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_yellow
+                        text: "${cog}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_timeout_settings
+                            animation: OUT_RIGHT
+                            time: 300ms 
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_orange
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_orange
+                        text: "${voice}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_voice
+                            animation: OUT_RIGHT
+                            time: 300ms
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_green
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_green
+                        text: "${screen}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_screen
+                            animation: OUT_RIGHT
+                            time: 300ms
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_violet
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_violet
+                        text: "${next}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_setti
+                            animation: OUT_RIGHT
+                            time: 300ms  
+  ######################################################## page screen ######################################################################################################
+    - id: page_screen
+      bg_color: color_black
+      widgets:
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            shadow_opa: TRANSP
+            pad_all: 0
+            width: 300
+            height: 240
+            align: TOP_MID
+            layout:
+              pad_column: 0
+              pad_row: 0
+              type: GRID
+              grid_columns: [FR(50), FR(15), FR(20), FR(15)]
+              grid_rows: [FR(1), FR(1), FR(1), FR(1)]
+            widgets:
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_column_span: 1
+                  grid_cell_row_span: 1
+                  widgets:
+                    - label:
+                        id: display_backlight_label
+                        x: 24
+                        align: LEFT_MID
+                        text_font: nunito_20
+                        text_color: color_white
+                        text: "Screen"
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_column_span: 3
+                  grid_cell_row_span: 1
+                  widgets:
+                    - slider:
+                        id: display_backlight_brightness_slider
+                        radius: 6
+                        bg_color: color_gray
+                        align: CENTER
+                        width: 108
+                        height: 18
+                        min_value: 35
+                        max_value: 100
+                        value: 100
+                        indicator:
+                          bg_color: color_blue
+                          radius: 6
+                        knob:
+                          bg_opa: TRANSP
+                        on_release:
+                          then:
+                            - light.turn_on:
+                                id: display_backlight
+                                brightness: !lambda return int(x)/ 100.0;    
+
+
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_column_span: 1
+                  grid_cell_row_span: 1
+                  widgets:
+                    - label:
+                        id: s_saver_blank_delay_label
+                        x: 24
+                        align: LEFT_MID
+                        text_font: nunito_20
+                        text_color: color_white
+                        text: "sleep"
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_column_span: 3
+                  grid_cell_row_span: 1
+                  widgets:
+                    - roller:
+                        id: display_timeout_roller1
+                        width: 108
+                        align: CENTER
+                        bg_opa: TRANSP
+                        border_opa: TRANSP
+                        shadow_opa: TRANSP
+                        text_font: nunito_18
+                        text_line_space: 2
+                        selected:
+                          bg_opa: TRANSP
+                          text_font: nunito_20
+                          text_color: color_blue
+                        selected_index: !lambda return id(display_timeout_global);  
+                        options:
+                          - 20
+                          - 30
+                          - 60
+                          - 80
+                          - 360
+                        visible_row_count: 2
+                        on_value:
+                            then:
+                              - number.set:
+                                  id: s_saver_delay
+                                  value: !lambda |-
+                                    static const int backlight_time[] = {20, 30, 60, 80, 360};
+                                    return backlight_time[x];
+                              - globals.set:
+                                  id: display_timeout_global
+                                  value: !lambda return x;    
+
+
+
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_column_span: 3
+                  grid_cell_row_span: 1
+                  widgets:
+                    - roller:
+                        id: display_timeout_roller2
+                        width: 108
+                        align: CENTER
+                        bg_opa: TRANSP
+                        border_opa: TRANSP
+                        shadow_opa: TRANSP
+                        text_font: nunito_18
+                        text_line_space: 2
+                        selected:
+                          bg_opa: TRANSP
+                          text_font: nunito_20
+                          text_color: color_green
+                        selected_index: !lambda return id(display_timeout_global);  
+                        options:
+                          - 30
+                          - 60
+                          - 80
+                          - 360
+                        visible_row_count: 2
+                        on_value:
+                            then:
+                              - number.set:
+                                  id: s_saver_blank_delay
+                                  value: !lambda |-
+                                    static const int backlight_time[] = {30, 60, 80, 360};
+                                    return backlight_time[x];
+                              - globals.set:
+                                  id: display_timeout_global
+                                  value: !lambda return x;    
+                              
+
+
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_column_span: 1
+                  grid_cell_row_span: 1
+                  widgets:
+                    - label:
+                        id: s_saver_delay_label
+                        x: 24
+                        align: LEFT_MID
+                        text_font: nunito_20
+                        text_color: color_white
+                        text: "s_saver"
+
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_column_span: 1
+                  grid_cell_row_span: 1
+                  widgets:
+                    - switch:
+                        id: s_saver_switch
+                        bg_color: color_dark_gray
+                        align: RIGHT_MID
+                        indicator:
+                          checked:
+                            bg_color: color_blue
+                        on_value:    
+                          switch.toggle: s_saver
+       
+
+
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_column_span: 1
+                  grid_cell_row_span: 1
+                  widgets:
+                    - switch:
+                        id: switch_s_saver_mode
+                        bg_color: color_dark_gray
+                        align: RIGHT_MID
+                        indicator:
+                          checked:
+                            bg_color: color_amber
+                        on_value:
+                          switch.toggle: s_saver_mode    
+
+
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 3
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_column_span: 1
+                  grid_cell_row_span: 1
+                  widgets:
+                    - label:
+                        id: switch_s_saver_presc_label
+                        x: 24
+                        align: LEFT_MID
+                        text_font: nunito_20
+                        text_color: color_white
+                        text: "s_presc"              
+
+              - button:
+                  bg_opa: TRANSP
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  pad_all: 0
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 3
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  grid_cell_column_span: 1
+                  grid_cell_row_span: 1
+                  widgets:
+                    - switch:
+                        id: switch_s_saver_presc
+                        bg_color: color_dark_gray
+                        align: RIGHT_MID
+                        indicator:
+                          checked:
+                            bg_color: color_amber 
+                        on_value:
+                          switch.toggle: s_saver_presc                        
+
+
+        - line:
+            points:
+              - 18, 63
+              - 270, 63
+            line_width: 1
+            line_color: color_dark_gray
+            line_rounded: true
+
+        - line:
+            points:
+              - 18, 126
+              - 270, 126
+            line_width: 1
+            line_color: color_dark_gray
+            line_rounded: true
+
+        - line:
+            points:
+              - 18, 189
+              - 270, 189
+            line_width: 2
+            line_color: color_dark_gray
+            line_rounded: true
+
+####################################################### PAGE TEST ###############################################################################################################
+    - id: test_page
+      bg_color: color_black
+      widgets:
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            shadow_opa: TRANSP
+            width: 183
+            height: 183
+            y: 5 
+            align: RIGHT_MID 
+            widgets:
+              - meter:
+                  height: 120
+                  width: 120
+                  border_width: 0
+                  bg_opa: TRANSP
+                  align: center
+                  scales:
+                    - range_from: 5
+                      range_to: 45
+                      angle_range: 270
+                      ticks:
+                        width: 1
+                        count: 41
+                        length: 4
+                        color: color_white
+                        major:
+                          stride: 5
+                          width: 2
+                          length: 7
+                          color: color_white
+                          label_gap: 7
+                      indicators:
+                        - tick_style:
+                            start_value: 5
+                            end_value: 45
+                            color_start: color_blue
+                            color_end: color_crimson
+                            width: 1
+
+              - arc:
+                  id: arc_brightness
+                  align: CENTER
+                  arc_width: 10
+                  width: 118
+                  height: 118
+                  min_value: 5
+                  max_value: 45
+                  adjustable: true
+                  adv_hittest: true
+                  arc_opa: TRANSP
+                  indicator:
+                    arc_color: color_deep_orange
+                    arc_width: 10
+                  knob:
+                    border_color: color_deep_orange
+                    border_width: 3
+                    bg_color: color_amber
+                  on_release:
+                    - homeassistant.service:
+                        service: light.turn_on
+                        data:
+                          entity_id: light.eclairage_entree_1
+                          brightness: !lambda return x;   
+
+
+
+
+              - arc:
+                  id: arc_light
+                  clickable: false
+                  align: CENTER
+                  arc_width: 7
+                  width: 74
+                  height: 74
+                  min_value: 5
+                  max_value: 45
+                  value: 11
+                  adjustable: true
+                  arc_opa: TRANSP
+                  indicator:
+                    arc_opa: TRANSP
+                  knob:
+                    border_opa: TRANSP
+                    bg_color: color_white
+
+
+              - obj:
+                  align: CENTER
+                  bg_color: color_black
+                  border_opa: TRANSP
+                  shadow_opa: TRANSP
+                  width: 83
+                  height: 83
+                  radius: 43
+
+
+
+              - label:
+                  id: arc_brightness_percent
+                  x: 90
+                  y: 20
+                  align: LEFT_MID
+                  text_font: nunito_16
+                  text_color: color_white
+                  text: "100"
+
+
+  
+
+
+
+
+
+
+
+
+    - id: page_timer_finished
+      bg_color: color_black
+      widgets:
+        # Timer Finished title
+        - label:
+            id: timer_finished_label
+            align: TOP_MID
+            text: "Timer Finished"
+            text_font: nunito_20
+            text_color: color_blue
+            x: 0
+            y: 20
+
+
+        # Timer Finished icon
+        - label:
+            id: timer_finished_icon
+            text: "\U000F009E"  # Icon Unicode for the bell symbol
+            text_font: icon_font_100
+            text_color: color_blue
+            x: 0
+            y:  80
+            align: TOP_MID
+
+        # Tap screen to dismiss message
+        - label:
+            id: dismiss_message
+            align: TOP_MID
+            text: "tap screen to dismiss"
+            text_font: nunito_24
+            text_color: color_blue
+            x: 0
+            y: 200
+            on_click:
+              then:
+                - switch.turn_off: timer_ringing
+                - lvgl.page.show: page_home
+                - component.update: my_display
+
+
+
+    - id: page_timeout_settings  
+      bg_color: color_black
+      widgets:
+        # Timeout Settings title
+        - label:
+            id: timeout_title
+            align: TOP_MID
+            text: "Timeout Settings"
+            text_font: nunito_24
+            text_color: color_blue
+            x: 0
+            y: 20
+
+
+    - id: page_time_remaining
+      bg_color: color_black
+      widgets:
+        # Active Timers title
+        - label:
+            id: active_timers_label
+            text: "Active Timers"
+            text_font: nunito_24
+            text_color: color_blue
+            align: TOP_MID
+            x: 0
+            y: 20
+
+        # Icon in the middle
+        - label:
+            id: active_timers_icon
+            text: "\U000F0150"  # Unicode for the icon
+            text_font: icon_font_100
+            text_color: color_blue
+            align: TOP_MID
+            x: 0
+            y: 70
+
+        # Dynamic timer text
+        - label:
+            id: time_remaining_label
+            text: ""  # Will be dynamically updated
+            text_font: nunito_48
+            text_color: color_blue
+            align: TOP_MID
+            x: 0
+            y: 155
+
+
+
+
+    - id: page_voice
+      bg_color: color_black
+
+
+
+
+    - id: page_next
+      bg_color: color_black  
+   
+####################################################################################################################
+
+    - id: page_setti
+      bg_color: color_black
+      widgets:
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            width: 300
+            height: 170
+            align: CENTER
+            x: 0
+            y: 0
+            layout:
+              pad_row: 18
+              pad_column: 30
+              type: GRID
+              grid_columns: [FR(1), FR(1)]
+              grid_rows: [FR(1), FR(1)]       
+        - obj:
+            bg_opa: TRANSP
+            border_opa: TRANSP
+            width: 300
+            height: 200
+            align: CENTER
+            x: 0
+            y: 20
+            layout:
+              pad_row: 18
+              pad_column: 18
+              type: GRID
+              grid_columns: [FR(1), FR(1)]
+              grid_rows: [FR(1), FR(1), FR(1)]
+            widgets:
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_crimson
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_crimson
+                        text: "${source}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_test1
+                            animation: OUT_RIGHT
+                            time: 300ms
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_blue
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 0
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_blue
+                        text: "${cctv}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_frigate
+                            animation: OUT_RIGHT
+                            time: 300ms 
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_yellow
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_yellow
+                        text: "${angular}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_spin
+                            animation: OUT_RIGHT
+                            time: 300ms 
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_orange
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 1
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_orange
+                        text: "${voice}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_ass
+                            animation: OUT_RIGHT
+                            time: 300ms
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_green
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 0
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_green
+                        text: "${kubernetes}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: temperature_page
+                            animation: OUT_RIGHT
+                            time: 300ms
+
+              - button:
+                  bg_color: color_black
+                  shadow_color: color_violet
+                  shadow_spread: 1
+                  shadow_width: 12
+                  shadow_opa: 100%
+                  grid_cell_column_pos: 1
+                  grid_cell_row_pos: 2
+                  grid_cell_x_align: STRETCH
+                  grid_cell_y_align: STRETCH
+                  widgets:
+                    - label:
+                        align: CENTER
+                        text_font: mdi36
+                        text_color: color_violet
+                        text: "${radio}"
+                  on_press:
+                    then:
+                        - lvgl.page.show: 
+                            id: page_radio
+                            animation: OUT_RIGHT
+                            time: 300ms     
+
+
+    - id: temperature_page
+      bg_color: color_black
+      widgets:
+        - label:
+            id: temperature_title
+            text: "Temperature"
+            text_font: roboto_bold_36
+            x: 20
+            y: 10
+
+        - label:
+            id: temperature_label
+            text: "22.6 °C"  # Ce texte sera mis à jour dynamiquement
+            text_font: roboto_bold_36
+            x: 20
+            y: 50
+
+          # Simulation de graphique avec une série de barres représentant les valeurs de température
+        - bar:
+            id: temp_bar1
+            width: 10
+            height: 50
+            x: 20
+            y: 90
+            bg_color: color_orange
+        - bar:
+            id: temp_bar2
+            width: 10
+            height: 50
+            x: 40
+            y: 90
+            bg_color: color_orange
+        - bar:
+            id: temp_bar3
+            width: 10
+            height: 50
+            x: 60
+            y: 90
+            bg_color: color_orange
+
+
+              
+
+# Configuration LVGL page avec animation d’un widget
+    - id: page_frigate
+      widgets:
+
+
+
+
+    - id: page_spin
+      bg_color: color_black 
+      widgets:
+        - spinner:
+            align: CENTER
+            spin_time: 2s
+            arc_length: 20deg
+            id: spinner_id
+            indicator:
+              arc_color: color_green
+
+        - label:
+            id: spinner_progress_label
+            align: CENTER  # Center label on the screen
+            x: 0
+            y: 80  # Position the label slightly below the spinner
+            text_font: nunito_16
+            text_color: color_white
+            text: "Starting..."    
+
+        - bar:
+            id: progress_bar
+            align: CENTER
+            x: 0
+            y: 110  # Positionnez la barre sous le label
+            width: 200  # Largeur de la barre
+            height: 20  # Hauteur de la barre
+            bg_color: color_gray  # Couleur de fond de la barre
+            indicator: 
+              bg_color: color_red 
+
+        - label:
+            id: my_label
+            align: CENTER
+            text: "Start Update"
+            text_font: nunito_16
+            text_color: color_white        
+
+           
+
+
+    - id: page_ass
+      widgets:
+        - obj: 
+            styles: home_page
+            widgets:
+              - image:
+                  align: CENTER
+                  src: cctv_img
+                  id: cctv_img_lvgl
+        - obj:
+            width: 320
+            height: 240
+            bg_opa: transp
+            border_width: 7
+            border_color: white
+
+            widgets:  
+              - label:
+                  align: BOTTOM_LEFT
+                  id: image_update_lvgl_labl
+                  text_font: icon_font_36
+                  text_color: red
+                  text: "\U000F0450" 
+                  text_align: CENTER
+                  translate_y: 15
+                  on_click:
+                    - online_image.set_url:
+                        id: cctv_img
+                        url: "https://github.com/youkorr/home-assistant-esp32-box-s3/blob/main/voice_assistant_gfx/loading.png"
+                    - component.update:
+                        id: cctv_img
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                    #- online_image.set_url:
+                        #id: cctv_img  
+                        #url: "http://a.espncdn.com/i/teamlogos/soccer/500/364.png"                           
+
+
+
+
+
+
+
+
+
+
+                   
+                   
+
+                        
+                          
+                      
+                          
+
+                                  
+
+
+
+                              
+                        
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    - id: page_test1
+      bg_color: color_black 
+
+
+    - id: page_radio
+      bg_color: color_black                               
+                
+
+  top_layer:
+    widgets:
+      - button:
+          id: boot_screen
+          bg_color: color_black
+          shadow_opa: TRANSP
+          width: 100%
+          height: 100% 
+                     
+            
+  on_idle:
+    timeout: !lambda "return (id(s_saver_blank_delay).state * 1000);"
+    then:
+      - logger.log: "LVGL is idle"
+      - light.turn_off: display_backlight 
+      - lvgl.resume:                 
