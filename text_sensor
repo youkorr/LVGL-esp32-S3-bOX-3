@@ -1,0 +1,271 @@
+- platform: homeassistant
+  id: night_light_1
+  entity_id: light.eclairage_entree_1 
+  on_value:
+    then:
+       - if:
+          condition:
+            lambda: 'return id(night_light_1).state == "on";'
+          then:
+            - lvgl.button.update:
+                id: button_1
+                border_color: color_amber
+                shadow_color: color_amber
+                shadow_opa: COVER
+                shadow_spread: 2
+                shadow_width: 20
+          else:
+            - lvgl.button.update:
+                id: button_1
+                border_color: color_dark_gray
+                shadow_opa: TRANSP
+
+- platform: homeassistant
+  id: night_light_2
+  entity_id: light.eclairage_escalier
+  on_value:
+    then:
+       - if:
+          condition:
+            lambda: 'return id(night_light_2).state == "on";'
+          then:
+            - lvgl.button.update:
+                id: button_2
+                border_color: color_amber
+                shadow_color: color_amber
+                shadow_opa: COVER
+                shadow_spread: 2
+                shadow_width: 20
+          else:
+            - lvgl.button.update:
+                id: button_2
+                border_color: color_dark_gray
+                shadow_opa: TRANSP
+
+
+
+
+- platform: homeassistant
+  id: night_light_3
+  entity_id: light.eclairage_escalier
+  on_value:
+    then:
+       - if:
+          condition:
+            lambda: 'return id(night_light_3).state == "on";'
+          then:
+            - lvgl.button.update:
+                id: button_3
+                border_color: color_amber
+                shadow_color: color_amber
+                shadow_opa: COVER
+                shadow_spread: 2
+                shadow_width: 20  
+          else:
+            - lvgl.button.update:
+                id: button_3
+                border_color: color_dark_gray
+                shadow_opa: TRANSP                
+
+
+
+  # Sun horizon sensor from Home Assistant #
+- platform: homeassistant
+  id: sun_state
+  entity_id: sun.sun
+
+  # Weather state from Home Assistant #
+- platform: homeassistant
+  id: weather_state
+  entity_id: weather.forecast_maison # Change the entity from your Home Assistant
+  on_value: 
+    then:
+      - lambda: |-
+          if (id(sun_state).state == "below_horizon" && (id(weather_state).state == "cloudy" || id(weather_state).state == "partlycloudy")) {
+          lv_obj_clear_flag(id(weather_partlycloudy_moon), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_partlycloudy_moon), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(sun_state).state != "below_horizon" && id(weather_state).state == "cloudy") {
+          lv_obj_clear_flag(id(weather_cloudy), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_cloudy), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(sun_state).state != "below_horizon" && id(weather_state).state == "partlycloudy") {
+          lv_obj_clear_flag(id(weather_partlycloudy_sun), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_partlycloudy_sun), LV_OBJ_FLAG_HIDDEN);
+          }
+          if ((id(sun_state).state != "below_horizon" && id(weather_state).state == "sunny") || (id(sun_state).state != "below_horizon" && id(weather_state).state == "clear-night")) {
+          lv_obj_clear_flag(id(weather_sunny), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_sunny), LV_OBJ_FLAG_HIDDEN);
+          }
+          if ((id(sun_state).state == "below_horizon" && id(weather_state).state == "sunny") || (id(sun_state).state == "below_horizon" && id(weather_state).state == "clear-night")) {
+          lv_obj_clear_flag(id(weather_clear_night), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_clear_night), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(weather_state).state == "rainy") {
+          lv_obj_clear_flag(id(weather_rainy), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_rainy), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(weather_state).state == "lightning-rainy") {
+          lv_obj_clear_flag(id(weather_lightning_rainy), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_lightning_rainy), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(weather_state).state == "lightning") {
+          lv_obj_clear_flag(id(weather_lightning), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_lightning), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(weather_state).state == "pouring") {
+          lv_obj_clear_flag(id(weather_pouring), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_pouring), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(weather_state).state == "snowy") {
+          lv_obj_clear_flag(id(weather_snowy), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_snowy), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(weather_state).state == "snowy-rainy") {
+          lv_obj_clear_flag(id(weather_snowy_rainy), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_snowy_rainy), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(weather_state).state == "fog") {
+          lv_obj_clear_flag(id(weather_fog), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_fog), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(weather_state).state == "hail") {
+          lv_obj_clear_flag(id(weather_hail), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_hail), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(weather_state).state == "windy") {
+          lv_obj_clear_flag(id(weather_windy), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_windy), LV_OBJ_FLAG_HIDDEN);
+          }
+          if (id(weather_state).state == "windy-variant") {
+          lv_obj_clear_flag(id(weather_windy_variant), LV_OBJ_FLAG_HIDDEN);
+          } else {
+          lv_obj_add_flag(id(weather_windy_variant), LV_OBJ_FLAG_HIDDEN);
+          }
+
+  # Air Quality Sensor #
+- platform: homeassistant
+  id: sensor_tvoc
+  entity_id: sensor.temp_entree_voc_index # Change the entity from your Home Assistant
+  on_value:
+    then:
+      - script.execute: tvoc_state
+      
+  # Motion Sensor #
+- platform: homeassistant
+  id: sensor_motion
+  entity_id: binary_sensor.display_presence_detect # Change the entity from your Home Assistant
+  on_value:
+    then:
+      - lvgl.label.update:
+          id: motion_status
+          text_color: !lambda |-
+            if (id(sensor_motion).state == "on") {
+            return lv_color_hex(0x00ff00);
+            }
+            return lv_color_hex(0x333333);
+
+              
+     
+- platform: homeassistant
+  id: alarm_status
+  entity_id: alarm_control_panel.alarmo # Change the entity from your Home Assistant
+  on_value:
+    then:
+      - lvgl.label.update:
+          id: alarme_status
+          text_color: !lambda |-
+            if (id(alarm_status).state == "armed_away") {
+            return lv_color_hex(0x00ff00);
+            }
+            return lv_color_hex(0xff0000); 
+   
+
+
+
+
+
+- platform: template
+  id: time_remaining_0
+  name: Timer 
+  icon: mdi:clock
+  on_value:
+    - lvgl.label.update:
+        id: active_timers_label
+        text: !lambda return x;
+
+         
+- platform: template
+  id: time_remaining_1
+                                                                                                                                                                                
+
+
+
+- platform: template
+  id: wakeword_location
+
+- platform: homeassistant
+  entity_id: media_player.${external_media_player}
+  id: ha_media_status
+  on_value:
+    component.update: my_display
+      
+- platform: homeassistant
+  entity_id: media_player.${external_media_player}
+  id: ha_media_title
+  attribute: media_content_id
+  on_value:
+    component.update: my_display 
+      
+- id: text_request
+  platform: template
+  on_value:
+    then:
+      - lambda: |
+          lv_obj_clean(id(voice_response_label));
+          lv_label_set_text(id(voice_response_label), "");
+          lv_label_set_text_fmt(id(voice_response_label), "COMMAND: %s", x.c_str());
+          lv_label_set_long_mode(id(voice_response_label), LV_LABEL_LONG_WRAP);  // Active le retour à la ligne automatique
+          lv_obj_set_width(id(voice_response_label), 240);  // Définir la largeur maximale du label
+          lv_obj_align(id(voice_response_label), LV_ALIGN_BOTTOM_MID, 0, -10);  // Centre le label horizontalement et le place en bas
+          lv_obj_fade_in(id(voice_response_label), 500, 0);
+
+- id: text_response
+  platform: template
+  on_value:
+    then:
+      - lambda: |
+          lv_obj_clean(id(voice_response_label));
+          lv_label_set_text(id(voice_response_label), "");
+          lv_label_set_text_fmt(id(voice_response_label), "COMMAND: %s", x.c_str());
+          lv_label_set_long_mode(id(voice_response_label), LV_LABEL_LONG_WRAP);  // Active le retour à la ligne automatique
+          lv_obj_set_width(id(voice_response_label), 240);  // Définir la largeur maximale du label
+          lv_obj_align(id(voice_response_label), LV_ALIGN_BOTTOM_MID, 0, -10);  // Centre le label horizontalement et le place en bas
+          lv_obj_fade_in(id(voice_response_label), 500, 0);
+
+
+
+#- platform: homeassistant
+  #id: snapshot
+  #entity_id: sensor.picture
+  #attribute: url
+  #on_value:
+    #then:
+    #- online_image.set_url:
+        #id: cctv_img
+       # prepend https:// because it has trouble decoding the url otherwise
+        #url: !lambda 'return ("https://" + x).c_str();'
