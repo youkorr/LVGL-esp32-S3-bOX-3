@@ -1,0 +1,2424 @@
+# yamllint disable rule:line-length
+
+## Based on https://github.com/BigBobbas/ESP32-S3-Box3-Custom-ESPHome
+##
+## You can change the name and friendly name before the device is added to Home Assistant.
+## The friendly name is how the device will show in Home Assistant.
+## Once added to HA changing the device name can lead to connection issues, between HA and the device.
+##
+## The following secrets are required:
+##   api_encryption_key - API Encryption Key (https://esphome.io/components/api.html)
+##   ota_password - OTA Password (https://esphome.io/components/ota/esphome)
+## Only required if not using BLE Improv - TODO
+##   wifi_ssid - SSID of your wifi network
+##   wifi_password - Password for your wifi network
+##   wifi_domain - Domain for your wifi network (e.g. ".local", ".lan", ".mydomain.com")
+
+## Example logger lines needed for debugging casting issues and the like
+#  - logger.log:
+#        format: "The temperature sensor reports value %.1f and humidity %.1f"
+#        args: [ 'id(temperature_sensor).state', 'id(humidity_sensor).state' ]
+---
+substitutions:
+  name: s3box3-satellite
+  friendly_name: S3Box3 Satellite
+
+  ### Update the device IP and uncomment under "wifi:" if changing device name and resolution fails
+  ### The "wifi:" line should be commented out after confirmed new name is working
+  wifi_use_address: 0.0.0.0
+
+  ### Models available: alexa, hey_jarvis, okay_nabu, hey_mycroft
+  micro_wake_word_model: okay_nabu
+
+  ###  Days and months - Change the values on the right to match your locale ###
+  sun: Sunday
+  mon: Monday
+  tue: Tuesday
+  wed: Wednesday
+  thu: Thursday
+  fri: Friday
+  sat: Saturday
+
+  jan: January
+  feb: February
+  mar: March
+  apr: April
+  may: May
+  jun: June
+  jul: July
+  aug: August
+  sep: September
+  oct: October
+  nov: November
+  dec: December
+
+  boot_screen_image_url: https://github.com/BigBobbas/ESP32-S3-Box3-Custom-ESPHome/raw/main/images/loading.png
+  # boot_screen_image_url: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/loading_320_240.png
+  listening_image_url: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/listening_320_240.png
+  thinking_image_url: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/thinking_320_240.png
+  replying_image_url: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/replying_320_240.png
+  error_image_url: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/error_320_240.png
+  timer_finished_image_url: https://github.com/esphome/wake-word-voice-assistants/raw/main/casita/timer_finished_320_240.png
+  ### END OF SUBSTITUTIONS ###
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+  min_version: 2025.2.0
+  on_boot:
+    priority: 600
+    then:
+      - script.execute: set_default_backlight_brightness
+      - delay: 5s
+      - lvgl.widget.hide: boot_screen_obj
+      - lvgl.label.update:
+          id: home_page_time_remaining_label
+          text: "No Timers"
+      - lambda: id(lvgl_change_page_script)->execute("home_page");
+  project:
+    name: "Raetha.S3Box3 Assistant"
+    version: "2025.03.01"
+
+esp32:
+  board: esp32s3box
+  flash_size: 16MB
+  framework:
+    type: esp-idf
+    sdkconfig_options:
+      CONFIG_ESP32S3_DEFAULT_CPU_FREQ_240: "y"
+      CONFIG_ESP32S3_DATA_CACHE_64KB: "y"
+      CONFIG_ESP32S3_DATA_CACHE_LINE_64B: "y"
+
+external_components:
+  # TODO - Needed with ESPHome 2025.3.0 until PR 8444 is accepted
+  - source: github://pr#8444
+    components: [lvgl]
+
+psram:
+  mode: octal
+  speed: 80MHz
+
+api:
+  on_client_connected:
+    - if:
+        condition:
+          lambda: 'return (0 == client_info.find("Home Assistant "));'
+        then:
+          - script.execute: set_default_backlight_brightness
+          - lvgl.label.update:
+              id: api_info_page_client_info_label
+              text:
+                format: "Client: %s"
+                args: ['client_info.c_str()']
+          - lvgl.label.update:
+              id: api_info_page_client_address_label
+              text:
+                format: "Client IP: %s"
+                args: ['client_address.c_str()']
+          - lvgl.widget.show: api_info_page_client_address_label
+          - lvgl.label.update:
+              id: api_button_label
+              text_color: my_green
+  on_client_disconnected:
+    - if:
+        condition:
+          lambda: 'return (0 == client_info.find("Home Assistant "));'
+        then:
+          - script.execute: set_default_backlight_brightness
+          - lvgl.label.update:
+              id: api_info_page_client_info_label
+              text: "Client Not Connected"
+          - lvgl.widget.hide: api_info_page_client_address_label
+          - lvgl.label.update:
+              id: api_button_label
+              text_color: my_red
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - id: ota_esphome
+    platform: esphome
+    on_begin:
+      - lambda: id(lvgl_change_page_script)->execute("ota_page");
+    on_progress:
+      - lvgl.bar.update:
+          id: ota_page_progress_bar
+          value: !lambda "return (int)x;"
+      - lambda: id(lvgl_1).loop();
+    password: !secret ota_password
+
+logger:
+  hardware_uart: USB_SERIAL_JTAG
+  logs:
+    text_sensor: WARN
+    component: ERROR
+
+wifi:
+  # use_address: ${wifi_use_address}
+  # TODO - disable through fast_connect for BLE improv, uncomment ble lines
+  # ssid: !secret wifi_ssid
+  # password: !secret wifi_password
+  # domain: !secret wifi_domain
+  # fast_connect: true
+  enable_btm: true
+  enable_rrm: true
+  # TODO - disable ap for BLE improv
+  # ap:
+  #  ssid: ${name}
+  #  password: s3box123
+  on_connect:
+    # TODO - Uncomment for BLE improv
+    - delay: 5s  # Gives time for improv results to be transmitted
+    - ble.disable:
+    - lambda: id(wifi_connection) = true;
+    - script.execute: set_default_backlight_brightness
+    - lvgl.label.update:
+        id: wifi_button_label
+        text_color: my_green
+  on_disconnect:
+    # TODO - Uncomment for BLE improv
+    - ble.enable:
+    - lambda: id(wifi_connection) = false;
+    - script.execute: set_default_backlight_brightness
+    - lvgl.label.update:
+        id: wifi_button_label
+        text_color: my_red
+
+# TODO - disable captive_portal for BLE improv
+# captive_portal:
+
+# TODO - enable for BLE improv
+improv_serial:
+
+# TODO - enable for BLE improv, may not be needed for improv
+# esp32_ble:
+#  name: raetha-s3box3
+
+# TODO - enable for BLE improv
+esp32_improv:
+  authorizer: none
+
+spi:
+  - id: spi_bus
+    clk_pin: 7
+    mosi_pin: 6
+
+i2c:
+  - id: bus_a
+    scl: GPIO18
+    sda: GPIO8
+    scan: true
+    scl_pullup_enabled: true
+    sda_pullup_enabled: true
+    frequency: 100kHz
+  - id: bus_b
+    scl: GPIO40
+    sda: GPIO41
+    scan: true
+    scl_pullup_enabled: true
+    sda_pullup_enabled: true
+    frequency: 50kHz
+
+output:
+  - id: backlight_output
+    platform: ledc
+    pin: GPIO47
+
+display:
+  - id: s3_box_lcd
+    platform: ili9xxx
+    model: S3BOX
+    invert_colors: false
+    data_rate: 40MHz
+    cs_pin: 5
+    dc_pin: 4
+    reset_pin:
+      number: 48
+      inverted: true
+    update_interval: never
+    auto_clear_enabled: false
+
+touchscreen:
+  - id: gt911_touchscreen
+    platform: gt911
+    display: s3_box_lcd
+    i2c_id: bus_a
+    address: 0x5D
+    interrupt_pin:
+      number: GPIO3
+      ignore_strapping_warning: true
+    on_touch:
+      - script.execute: set_default_backlight_brightness
+    on_release:
+      - if:
+          condition: lvgl.is_paused
+          then:
+            - lvgl.resume:
+      - if:
+          condition:
+            lvgl.page.is_showing: clock_page
+          then:
+            - lambda: id(lvgl_change_page_script)->execute("home_page");
+
+i2s_audio:
+  - id: i2s_audio_bus
+    i2s_lrclk_pin:
+      number: GPIO45
+      ignore_strapping_warning: true
+    i2s_bclk_pin: GPIO17
+    i2s_mclk_pin: GPIO2
+
+audio_adc:
+  - id: es7210_adc
+    platform: es7210
+    i2c_id: bus_a
+    bits_per_sample: 16bit
+    sample_rate: 16000
+
+audio_dac:
+  - id: es8311_dac
+    platform: es8311
+    i2c_id: bus_a
+    bits_per_sample: 16bit
+    sample_rate: 48000
+
+microphone:
+  - id: box_mic
+    platform: i2s_audio
+    sample_rate: 16000
+    i2s_din_pin: GPIO16
+    bits_per_sample: 16bit
+    adc_type: external
+
+speaker:
+  - id: i2s_audio_speaker
+    platform: i2s_audio
+    i2s_audio_id: i2s_audio_bus
+    i2s_dout_pin: GPIO15
+    dac_type: external
+    sample_rate: 48000
+    bits_per_sample: 16bit
+    channel: left
+    audio_dac: es8311_dac
+    buffer_duration: 500ms  # Increased for stability without timeout @youkorr
+  # Virtual speakers to combine the announcement and media streams together into one output
+  - id: mixing_speaker
+    platform: mixer
+    output_speaker: i2s_audio_speaker
+    source_speakers:
+      - id: announcement_mixing_input
+      - id: media_mixing_input
+  # Vritual speakers to resample each pipelines' audio, if necessary, as the mixer speaker requires the same sample rate
+  - platform: resampler
+    id: announcement_resampling_speaker
+    output_speaker: announcement_mixing_input
+    sample_rate: 48000  # Added explicit sample rate
+  - platform: resampler
+    id: media_resampling_speaker
+    output_speaker: media_mixing_input
+    sample_rate: 48000  # Added explicit sample rate
+
+media_player:
+  - id: speaker_media_player
+    platform: speaker
+    name: Media Player
+    volume_increment: 0.05
+    volume_min: 0.5
+    volume_max: 0.8
+    task_stack_in_psram: true
+    announcement_pipeline:
+      speaker: announcement_resampling_speaker
+      format: FLAC
+      sample_rate: 48000
+      num_channels: 1  # S3 Box only has one output channel
+    media_pipeline:
+      speaker: media_resampling_speaker
+      format: FLAC  # FLAC is the least processor intensive codec
+      num_channels: 2
+      sample_rate: 48000
+    files:
+      - id: timer_finished_sound
+        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/timer_finished.flac
+      - id: wake_word_triggered_sound
+        file: https://github.com/esphome/home-assistant-voice-pe/raw/dev/sounds/wake_word_triggered.flac
+    on_state:
+      then:
+        - if:
+            condition:
+              media_player.is_playing:
+            then:
+              - micro_wake_word.stop
+              - voice_assistant.stop
+        - if:
+            condition:
+              and:
+                - lambda: return id(global_is_assisting) == false;
+                - or:
+                    - media_player.is_idle
+                    - media_player.is_paused
+            then:
+              - micro_wake_word.start
+        - if:
+            condition:
+              and:
+                - switch.is_off: timer_ringing_switch
+                - not:
+                    voice_assistant.is_running:
+                - not:
+                    media_player.is_announcing:
+            then:
+              - mixer_speaker.apply_ducking:
+                  id: media_mixing_input
+                  decibel_reduction: 0
+                  duration: 1.0s
+    on_play:
+      - wait_until:
+          - lambda: return id(global_is_assisting) == false;
+      - lvgl.label.update:
+          id: media_control_button_label
+          text: "\U000F03E4"
+      - lvgl.label.update:
+          id: media_player_state_label
+          text: "Playing"
+    on_pause:
+      - lvgl.label.update:
+          id: media_control_button_label
+          text: "\U000F040A"
+      - lvgl.label.update:
+          id: media_player_state_label
+          text: "Paused"
+    on_idle:
+      - lvgl.label.update:
+          id: media_control_button_label
+          text: "\U000F040A"
+      - lvgl.label.update:
+          id: media_player_state_label
+          text: "Idle"
+    on_announcement:
+      - mixer_speaker.apply_ducking:
+          id: media_mixing_input
+          decibel_reduction: 20
+          duration: 0.0s
+      - lvgl.label.update:
+          id: media_control_button_label
+          text: "\U000F03E4"
+      - lvgl.label.update:
+          id: media_player_state_label
+          text: "Announcing"
+    on_volume:
+      - lvgl.bar.update:
+          id: volume_bar
+          value: !lambda "return id(speaker_media_player).volume * 100;"
+
+micro_wake_word:
+  vad:
+  models:
+    - model: ${micro_wake_word_model}
+  on_wake_word_detected:
+    # TODO - Attempt to restore playing audio, if duplex enabled in future
+    # - if:
+    #    condition:
+    #      media_player.is_playing:
+    #    then:
+    #      - media_player.pause
+    - lambda: id(global_is_assisting) = true;
+    - if:
+        condition:
+          - switch.is_on: play_wake_sound_switch
+        then:
+          - media_player.speaker.play_on_device_media_file:
+              media_file: wake_word_triggered_sound
+              announcement: true
+          - wait_until:
+              not:
+                - media_player.is_announcing:
+          - delay: 150ms
+    - voice_assistant.start:
+        wake_word: !lambda return wake_word;
+
+voice_assistant:
+  id: va
+  microphone: box_mic
+  media_player: speaker_media_player
+  use_wake_word: false
+  noise_suppression_level: 2
+  auto_gain: 31dBFS
+  volume_multiplier: 4.0
+  on_start:
+    - if:
+        condition:
+          or:
+            - lvgl.page.is_showing: assist_listening_page
+            - lvgl.page.is_showing: assist_thinking_page
+            - lvgl.page.is_showing: assist_replying_page
+        then:
+          - lambda: id(lvgl_change_page_script)->execute("home_page");
+  on_listening:
+    - lambda: id(lvgl_change_page_script)->execute("assist_listening_page");
+  on_stt_end:
+    - lambda: id(lvgl_change_page_script)->execute("assist_thinking_page");
+    - lambda: id(update_header_popup_script)->execute(x);
+  on_tts_start:
+    - lambda: id(lvgl_change_page_script)->execute("assist_replying_page");
+    - lambda: id(update_footer_popup_script)->execute(x);
+  on_tts_end:
+    - if:
+        condition:
+          - lvgl.page.is_showing: assist_replying_page
+        then:
+          - delay: 10s
+          - lambda: id(lvgl_change_page_script)->execute("home_page");
+  on_error:
+    - if:
+        condition:
+          not:
+            - voice_assistant.is_running
+        then:
+          - lambda: id(lvgl_change_page_script)->execute("assist_error_page");
+          - lambda: id(update_header_popup_script)->execute(code);
+          - lambda: id(update_footer_popup_script)->execute(message);
+    - lambda: id(global_is_assisting) = false;
+  on_idle:
+    - if:
+        condition:
+          not:
+            - lvgl.page.is_showing: home_page
+        then:
+          - lambda: id(lvgl_change_page_script)->execute("home_page");
+  on_end:
+    - wait_until:
+        not:
+          voice_assistant.is_running:
+    - mixer_speaker.apply_ducking:
+        id: media_mixing_input
+        decibel_reduction: 0
+        duration: 1.0s
+    - lambda: id(global_is_assisting) = false;
+    - if:
+        condition:
+          - switch.is_off: mute_mic_switch
+        then:
+          - micro_wake_word.start
+    # TODO - Attempt to restore playing audio, if duplex enabled in future
+    # - if:
+    #    condition:
+    #      media_player.is_paused:
+    #    then:
+    #      - media_player.play
+  on_client_connected:
+    # TODO - enable for BLE improv
+    - wait_until:
+        not: ble.enabled
+    - if:
+        condition:
+          and:
+            - switch.is_off: mute_mic_switch
+        then:
+          - micro_wake_word.start:
+  on_client_disconnected:
+    - voice_assistant.stop:
+  # on_timer_started:
+  on_timer_cancelled:
+    - lvgl.label.update:
+        id: home_page_time_remaining_label
+        text: "No Timers"
+  # on_timer_updated:
+  on_timer_tick:
+    - lvgl.label.update:
+        id: home_page_time_remaining_label
+        text: !lambda |-
+          if (timers[0].seconds_left == 0) {
+            return "No Timers";
+          } else {
+            return str_sprintf("%d:%02d:%02d", (timers[0].seconds_left / 3600), ((timers[0].seconds_left % 3600) / 60), (timers[0].seconds_left % 60));
+          }
+    - if:
+        condition:
+          lambda: return (timers[0].seconds_left <= 30);
+        then:
+          - lambda: id(lvgl_center_popup_script)->execute(to_string(timers[0].seconds_left));
+  on_timer_finished:
+    - switch.turn_on: timer_ringing_switch
+    - lambda: id(lvgl_change_page_script)->execute("assist_timer_finished_page");
+
+script:
+  # TODO - More scripts to pull common functions out of other areas, and allow for easier changes
+  - id: set_default_backlight_brightness
+    then:
+      - if:
+          condition:
+            lambda: return (int(id(backlight_light).current_values.get_brightness() * 100) != int(id(brightness_percent).state));
+          then:
+            - lambda: id(backlight_light).turn_on().set_brightness(id(brightness_percent).state /100).perform();
+  - id: set_idle_backlight_brightness
+    then:
+      - if:
+          condition:
+            lambda: return (int(id(backlight_light).current_values.get_brightness() * 100) != int(id(clock_brightness_percent).state));
+          then:
+            - lambda: id(backlight_light).turn_on().set_brightness(id(clock_brightness_percent).state /100).perform();
+  - id: lvgl_center_popup_script
+    mode: queued
+    parameters:
+      text_value: string
+    then:
+      - lvgl.widget.show: center_popup_obj
+      - lvgl.label.update:
+          id: center_popup_label
+          text: !lambda |-
+            if(text_value.length() > 32) {
+              return (esphome::str_truncate(text_value,31) + "...").c_str();
+            }
+            else {
+              return text_value;
+            }
+  - id: update_header_popup_script
+    mode: queued
+    parameters:
+      text_value: string
+    then:
+      - lvgl.label.update:
+          id: header_popup_label
+          text: !lambda |-
+            if(text_value.length() > 32) {
+              return (esphome::str_truncate(text_value,31) + "...").c_str();
+            }
+            else {
+              return text_value;
+            }
+  - id: update_footer_popup_script
+    mode: queued
+    parameters:
+      text_value: string
+    then:
+      - lvgl.label.update:
+          id: footer_popup_label
+          text: !lambda |-
+            if(text_value.length() > 32) {
+              return (esphome::str_truncate(text_value,31) + "...").c_str();
+            }
+            else {
+              return text_value;
+            }
+  - id: lvgl_update_date_script
+    then:
+      - lvgl.label.update:
+          id: clock_page_date_label
+          text:
+            format: "%s, %s %2d"
+            args:
+              - '(new const char *[7] {"${sun}","${mon}","${tue}","${wed}","${thu}","${fri}","${sat}"})[id(homeassistant_time).now().day_of_week - 1]'
+              - '(new const char *[12] {"${jan}","${feb}","${mar}","${apr}","${may}","${jun}","${jul}","${aug}","${sep}","${oct}","${nov}","${dec}"})[id(homeassistant_time).now().month - 1]'
+              - 'id(homeassistant_time).now().day_of_month'
+  - id: lvgl_update_time_script
+    then:
+      - if:
+          condition:
+            lambda: return id(time_format).state == "24 Hour";
+          then:
+            - lvgl.label.update:
+                id: clock_page_time_label
+                text: !lambda return id(homeassistant_time).now().strftime("%H:%M").c_str();
+                text_font: my_font_82
+          else:
+            - lvgl.label.update:
+                id: clock_page_time_label
+                text: !lambda return id(homeassistant_time).now().strftime("%l:%M%p").c_str();
+                text_font: my_font_72
+  - id: lvgl_change_page_script
+    mode: restart
+    parameters:
+      page_name: string
+    then:
+      - script.execute: set_default_backlight_brightness
+      - if:  # home_page
+          condition:
+            lambda: return page_name == "home_page";
+          then:
+            - lvgl.page.show: home_page
+            - lvgl.widget.show: [header_obj]
+            - lvgl.widget.hide: [header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - lambda: id(update_header_popup_script)->execute("");
+            - lambda: id(update_footer_popup_script)->execute("");
+            - script.stop: lvgl_change_page_script
+      - if:  # clock_page
+          condition:
+            lambda: return page_name == "clock_page";
+          then:
+            - lvgl.page.show: clock_page
+            - lvgl.widget.hide: [header_obj, header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - lambda: id(backlight_light).turn_on().set_brightness(id(clock_brightness_percent).state /100).perform();
+            - script.stop: lvgl_change_page_script
+      - if:  # ota_page
+          condition:
+            lambda: return page_name == "ota_page";
+          then:
+            - lambda: id(backlight_light).turn_on().set_brightness(1.0).set_transition_length(0).perform();
+                      id(backlight_light).loop();
+            - lvgl.page.show: ota_page
+            - lvgl.widget.hide: [header_obj, header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - script.stop: lvgl_change_page_script
+      - if:  # api_info_page
+          condition:
+            lambda: return page_name == "api_info_page";
+          then:
+            - lvgl.page.show: api_info_page
+            - lvgl.widget.show: [header_obj]
+            - lvgl.widget.hide: [header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - script.stop: lvgl_change_page_script
+      - if:  # wifi_info_page
+          condition:
+            lambda: return page_name == "wifi_info_page";
+          then:
+            - lvgl.page.show: wifi_info_page
+            - lvgl.widget.show: [header_obj]
+            - lvgl.widget.hide: [header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - script.stop: lvgl_change_page_script
+      - if:  # settings_page
+          condition:
+            lambda: return page_name == "settings_page";
+          then:
+            - lvgl.page.show: settings_page
+            - lvgl.widget.show: [header_obj]
+            - lvgl.widget.hide: [header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - script.stop: lvgl_change_page_script
+      - if:  # assist_listening_page
+          condition:
+            lambda: return page_name == "assist_listening_page";
+          then:
+            - lvgl.page.show: assist_listening_page
+            - if:
+                condition:
+                  lambda: return id(show_conversation_switch);
+                then:
+                  - lvgl.widget.show: [header_popup_obj]
+                  - lvgl.widget.hide: [header_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+                else:
+                  - lvgl.widget.hide: [header_obj, header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - script.stop: lvgl_change_page_script
+      - if:  # assist_thinking_page
+          condition:
+            lambda: return page_name == "assist_thinking_page";
+          then:
+            - lvgl.page.show: assist_thinking_page
+            - if:
+                condition:
+                  lambda: return id(show_conversation_switch);
+                then:
+                  - lvgl.widget.show: [header_popup_obj, footer_popup_obj]
+                  - lvgl.widget.hide: [header_obj, center_popup_obj, lvgl_keyboard]
+                else:
+                  - lvgl.widget.hide: [header_obj, header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - script.stop: lvgl_change_page_script
+      - if:  # assist_replying_page
+          condition:
+            lambda: return page_name == "assist_replying_page";
+          then:
+            - lvgl.page.show: assist_replying_page
+            - if:
+                condition:
+                  lambda: return id(show_conversation_switch);
+                then:
+                  - lvgl.widget.show: [header_popup_obj, footer_popup_obj]
+                  - lvgl.widget.hide: [header_obj, center_popup_obj, lvgl_keyboard]
+                else:
+                  - lvgl.widget.hide: [header_obj, header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - script.stop: lvgl_change_page_script
+      - if:  # assist_error_page
+          condition:
+            lambda: return page_name == "assist_error_page";
+          then:
+            - lvgl.page.show: assist_error_page
+            - lvgl.widget.show: [header_popup_obj, footer_popup_obj]
+            - lvgl.widget.hide: [header_obj, center_popup_obj, lvgl_keyboard]
+            - script.stop: lvgl_change_page_script
+      - if:  # assist_timer_finished_page
+          condition:
+            lambda: return page_name == "assist_timer_finished_page";
+          then:
+            - lvgl.page.show: assist_timer_finished_page
+            - lvgl.widget.hide: [header_obj, header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - script.stop: lvgl_change_page_script
+      - if:  # guest_wifi_qrcode_page
+          condition:
+            lambda: return page_name == "guest_wifi_qrcode_page";
+          then:
+            - lvgl.page.show: guest_wifi_qrcode_page
+            - lvgl.widget.show: [header_obj]
+            - lvgl.widget.hide: [header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+            - script.stop: lvgl_change_page_script
+      # Show home page if no match above
+      - lvgl.widget.hide: [header_popup_obj, footer_popup_obj, center_popup_obj, lvgl_keyboard]
+      - lvgl.widget.show: [header_obj]
+      - lvgl.page.show: home_page
+      - script.stop: lvgl_change_page_script
+
+image:
+  - id: error_image
+    file: ${error_image_url}
+    resize: 320x240
+    type: RGB565
+    transparency: alpha_channel
+  - id: listening_image
+    file: ${listening_image_url}
+    resize: 320x240
+    type: RGB565
+    transparency: alpha_channel
+  - id: thinking_image
+    file: ${thinking_image_url}
+    resize: 320x240
+    type: RGB565
+    transparency: alpha_channel
+  - id: replying_image
+    file: ${replying_image_url}
+    resize: 320x240
+    type: RGB565
+    transparency: alpha_channel
+  - id: timer_finished_image
+    file: ${timer_finished_image_url}
+    resize: 320x240
+    type: RGB565
+    transparency: alpha_channel
+  - id: boot_screen_image
+    file: ${boot_screen_image_url}
+    resize: 320x240
+    type: RGB565
+    transparency: alpha_channel
+
+font:
+  # - id: my_font_14
+  #   file: "gfonts://Inconsolata"
+  #   size: 14
+  #   ### If extended characters are needed, uncomment and add glyphsets to all gfonts entries ###
+  #   # glyphsets:
+  #   #   - GF_Latin_Core
+  - id: my_font_16
+    file: "gfonts://Inconsolata"
+    size: 16
+  # - id: my_font_18
+  #   file: "gfonts://Inconsolata"
+  #   size: 18
+  - id: my_font_22
+    file: "gfonts://Inconsolata"
+    size: 22
+    glyphsets:
+      - GF_Latin_Core
+  - id: my_font_28
+    file: "gfonts://Inconsolata"
+    size: 28
+  # - id: my_font_40
+  #   file: "gfonts://Inconsolata"
+  #   size: 40
+  # - id: my_font_50
+  #   file: "gfonts://Inconsolata"
+  #   size: 50
+  - id: my_font_72
+    file: "gfonts://Inconsolata"
+    size: 72
+  - id: my_font_82
+    file: "gfonts://Inconsolata"
+    size: 82
+  - id: google_icons_45
+    file: "gfonts://Material+Symbols+Outlined"
+    size: 45
+    glyphs: &google_icons_glyphs
+      - "\U0000e63e"  # wifi
+      - "\U0000e4d9"  # wifi 2 bar
+      - "\U0000e4ca"  # wifi 1 bar
+      - "\U0000f063"  # signal wifi bad
+  - id: mdi_icons_25
+    ## Lookup codes at https://pictogrammers.github.io/@mdi/font/7.4.47/
+    file: "https://pictogrammers.github.io/@mdi/font/7.4.47/fonts/materialdesignicons-webfont.ttf"
+    size: 25
+    glyphs: &mdi_icons_glyphs
+      - "\U000F07D0"  # home-assistant
+      # - "\U000F05A9"  # wifi
+      # - "\U000F16B5"  # wifi-alert
+      # - "\U000F051B"  # timer-outline
+      # - "\U000F051E"  # timer-off-outline
+      - "\U000F036C"  # microphone
+      - "\U000F036D"  # microphone-off
+      - "\U000F057E"  # volume-high
+      - "\U000F0581"  # volume-off
+      - "\U000F075D"  # volume-plus
+      - "\U000F075E"  # volume-minus
+      - "\U000F040A"  # play
+      - "\U000F03E4"  # pause
+      - "\U000F0432"  # qrcode
+      - "\U000F0493"  # cog
+      - "\U000F0B7B"  # chat-processing
+      - "\U000F1876"  # monitor-small
+      - "\U000F08D6"  # cogs
+      - "\U000F02DC"  # home
+      - "\U000F035E"  # menu-left
+      - "\U000F035F"  # menu-right
+      - "\U000F0954"  # clock
+      - "\U000F0416"  # plus-box
+      - "\U000F0375"  # minus-box
+      - "\U000F04B2"  # sleep
+  - id: mdi_icons_45
+    file: "https://pictogrammers.github.io/@mdi/font/7.4.47/fonts/materialdesignicons-webfont.ttf"
+    size: 45
+    glyphs: *mdi_icons_glyphs
+  - id: mdi_icons_75
+    file: "https://pictogrammers.github.io/@mdi/font/7.4.47/fonts/materialdesignicons-webfont.ttf"
+    size: 75
+    glyphs: *mdi_icons_glyphs
+
+color:
+  - id: my_blue
+    hex: '47B7E9'
+  - id: my_red
+    hex: 'FF3131'
+  - id: my_green
+    hex: '75D15F'
+  # - id: my_blue_drk
+  #  hex: '085296'
+  # - id: my_amber
+  #  hex: 'FBAB35'
+  # - id: my_lime
+  #  hex: '20FC30'
+  # - id: my_pink
+  #  hex: 'D92BBC'
+  # - id: my_yellow
+  #  hex: 'FFC000'
+  # - id: my_purple
+  #  hex: '73264D'
+  # - id: my_light_blue
+  #  hex: 'CFE2F3'
+  # - id: my_bg_blue
+  #  hex: '032341'
+  # - id: my_bg_purple
+  #  hex: '301020'
+  # - id: my_bg_green
+  #  hex: '05350B'
+  # - id: my_bg_red
+  #  hex: '3C0000'
+  # - id: my_bg_pink
+  #  hex: '61034D'
+  # - id: my_bg_charcoal
+  #  hex: '323232'
+  # - id: my_bg_brown
+  #  hex: '41220D'
+  # - id: my_bg_grey
+  #  hex: '4F4F4F'
+
+globals:
+  - id: wifi_connection
+    type: bool
+    restore_value: false
+    initial_value: "false"
+  - id: saved_speaker_volume
+    type: float
+    restore_value: false
+    initial_value: '.5'
+  - id: global_is_assisting
+    type: bool
+    restore_value: false
+  # - id: global_first_active_timer
+  #   type: voice_assistant::Timer
+  #   restore_value: false
+  # - id: global_is_timer_active
+  #   type: bool
+  #   restore_value: false
+  # - id: global_first_timer
+  #   type: voice_assistant::Timer
+  #   restore_value: false
+  # - id: global_is_timer
+  #   type: bool
+  #   restore_value: false
+
+button:
+  - id: restart_button
+    platform: restart
+    name: "Restart"
+    entity_category: config
+    disabled_by_default: true
+  - id: factory_reset_button
+    platform: factory_reset
+    name: "Factory Reset"
+    entity_category: config
+    disabled_by_default: true
+
+light:
+  - id: backlight_light
+    platform: monochromatic
+    name: Backlight
+    icon: "mdi:television"
+    entity_category: config
+    output: backlight_output
+    restore_mode: ALWAYS_ON
+    default_transition_length: 250ms
+
+switch:
+  # This is the mic mute switch. It is exposed to Home Assistant. The user can only turn it on and off if the hardware switch is off. (The hardware switch overrides the software one)
+  - id: mute_mic_switch
+    platform: template
+    name: "Mute Mic"
+    icon: "mdi:microphone-off"
+    restore_mode: RESTORE_DEFAULT_OFF
+    entity_category: config
+    turn_on_action:
+      - if:
+          condition:
+            binary_sensor.is_off: hardware_mute_switch
+          then:
+            - switch.template.publish:
+                id: mute_mic_switch
+                state: true
+    turn_off_action:
+      - if:
+          condition:
+            binary_sensor.is_off: hardware_mute_switch
+          then:
+            - switch.template.publish:
+                id: mute_mic_switch
+                state: false
+    on_turn_on:
+      - voice_assistant.stop
+      - micro_wake_word.stop
+      - lvgl.label.update:
+          id: mic_mute_button_label
+          text: "\U000F036D"
+          text_color: my_red
+    on_turn_off:
+      - if:
+          condition:
+            not:
+              - voice_assistant.is_running
+          then:
+            - micro_wake_word.start
+      - lvgl.label.update:
+          id: mic_mute_button_label
+          text: "\U000F036C"
+          text_color: my_blue
+  - id: mute_speaker_switch
+    platform: template
+    name: "Mute Speaker"
+    icon: "mdi:speaker-off"
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - lambda: id(saved_speaker_volume) = id(speaker_media_player).volume;
+      - media_player.volume_set:
+          id: speaker_media_player
+          volume: 0
+      - lvgl.label.update:
+          id: speaker_mute_button_label
+          text: "\U000F0581"
+          text_color: my_red
+    on_turn_off:
+      - media_player.volume_set:
+          id: speaker_media_player
+          volume: !lambda return id(saved_speaker_volume);
+      - lvgl.label.update:
+          id: speaker_mute_button_label
+          text: "\U000F057E"
+          text_color: my_blue
+  - id: off_enabled_switch
+    platform: template
+    name: "Off Enabled"
+    icon: 'mdi:monitor-off'
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    entity_category: config
+    on_turn_on:
+      - lvgl.widget.update:
+          id: off_enabled_lvgl_switch
+          state:
+            checked: true
+      - lvgl.widget.enable: [off_delay_seconds_textarea, off_delay_seconds_button]
+    on_turn_off:
+      - lvgl.widget.update:
+          id: off_enabled_lvgl_switch
+          state:
+            checked: false
+      - lvgl.widget.disable: [off_delay_seconds_textarea, off_delay_seconds_button]
+  - id: clock_enabled_switch
+    platform: template
+    name: "Idle Enabled"
+    icon: mdi:sleep
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    entity_category: config
+    on_turn_on:
+      - lvgl.widget.update:
+          id: clock_enabled_lvgl_switch
+          state:
+            checked: true
+      - lvgl.widget.enable: [clock_delay_seconds_textarea, clock_delay_seconds_button]
+    on_turn_off:
+      - lvgl.widget.update:
+          id: clock_enabled_lvgl_switch
+          state:
+            checked: false
+      - lvgl.widget.disable: [clock_delay_seconds_textarea, clock_delay_seconds_button]
+  - id: play_wake_sound_switch
+    platform: template
+    name: "Play Wake Sound"
+    icon: mdi:music
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - lvgl.widget.update:
+          id: play_wake_sound_lvgl_switch
+          state:
+            checked: true
+    on_turn_off:
+      - lvgl.widget.update:
+          id: play_wake_sound_lvgl_switch
+          state:
+            checked: false
+  - id: mute_responses_switch
+    platform: template
+    name: Mute Responses
+    icon: mdi:chat-sleep
+    entity_category: config
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_OFF
+    on_turn_on:
+      - lvgl.widget.update:
+          id: mute_responses_lvgl_switch
+          state:
+            checked: true
+    on_turn_off:
+      - lvgl.widget.update:
+          id: mute_responses_lvgl_switch
+          state:
+            checked: false
+  - id: show_conversation_switch
+    platform: template
+    name: "Display Conversation"
+    optimistic: true
+    restore_mode: RESTORE_DEFAULT_ON
+    entity_category: config
+    icon: 'mdi:chat'
+    on_turn_on:
+      - lvgl.widget.update:
+          id: show_conversation_lvgl_switch
+          state:
+            checked: true
+    on_turn_off:
+      - lvgl.widget.update:
+          id: show_conversation_lvgl_switch
+          state:
+            checked: false
+  # Interal only switches
+  - id: speaker_enable_switch
+    platform: gpio
+    name: "Speaker Enable"
+    internal: true
+    pin:
+      number: GPIO46
+      ignore_strapping_warning: true
+    restore_mode: RESTORE_DEFAULT_ON
+    entity_category: config
+    disabled_by_default: true
+  - id: timer_ringing_switch
+    platform: template
+    optimistic: true
+    internal: true
+    restore_mode: ALWAYS_OFF
+    on_turn_off:
+      # Turn off the repeat mode and disable the pause between playlist items
+      - lambda: |-
+              id(speaker_media_player)
+                ->make_call()
+                .set_command(media_player::MediaPlayerCommand::MEDIA_PLAYER_COMMAND_REPEAT_OFF)
+                .set_announcement(true)
+                .perform();
+              id(speaker_media_player)->set_playlist_delay_ms(speaker::AudioPipelineType::ANNOUNCEMENT, 0);
+      # Stop playing the alarm
+      - media_player.stop:
+          announcement: true
+      - micro_wake_word.start:
+    on_turn_on:
+      - lambda: id(backlight_light).turn_on().set_brightness(1.0).perform();
+      - micro_wake_word.stop:
+      # Turn on the repeat mode and pause for 1000 ms between playlist items/repeats
+      - lambda: |-
+            id(speaker_media_player)
+              ->make_call()
+              .set_command(media_player::MediaPlayerCommand::MEDIA_PLAYER_COMMAND_REPEAT_ONE)
+              .set_announcement(true)
+              .perform();
+            id(speaker_media_player)->set_playlist_delay_ms(speaker::AudioPipelineType::ANNOUNCEMENT, 1000);
+      - media_player.speaker.play_on_device_media_file:
+          media_file: timer_finished_sound
+          announcement: true
+      - delay: 15min
+      - switch.turn_off: timer_ringing_switch
+
+select:
+  - id: time_format
+    platform: template
+    name: "Time Format"
+    icon: mdi:hours-24
+    entity_category: config
+    optimistic: true
+    restore_value: true
+    options:
+      - 12 Hour
+      - 24 Hour
+    initial_option: 24 Hour
+    on_value:
+      - lvgl.dropdown.update:
+          id: time_format_dropdown
+          selected_text: !lambda return x;
+      - script.execute: lvgl_update_time_script
+
+text_sensor:
+  - platform: wifi_info
+    ip_address:
+      name: IP Address
+      entity_category: "diagnostic"
+      internal: true
+      on_value:
+        then:
+          - lvgl.label.update:
+              id: wifi_info_page_ip_label
+              text:
+                format: "IP: %s"
+                args: ["x.c_str()"]
+    ssid:
+      name: SSID
+      entity_category: "diagnostic"
+      internal: true
+      on_value:
+        then:
+          - lvgl.label.update:
+              id: wifi_info_page_ssid_label
+              text:
+                format: "SSID: %s"
+                args: ["x.c_str()"]
+    mac_address:
+      name: MAC Address
+      internal: true
+      on_value:
+        then:
+          - lvgl.label.update:
+              id: wifi_info_page_mac_label
+              text:
+                format: "MAC: %s"
+                args: ["x.c_str()"]
+  - id: version_text_sensor
+    platform: version
+    hide_timestamp: true
+    internal: true
+    on_value:
+      - lvgl.label.update:
+          id: api_info_page_version_label
+          text:
+            format: "Version: %s"
+            args: ['x.c_str()']
+  - id: uptime_text_sensor
+    platform: uptime
+    internal: true
+    on_value:
+      - lvgl.label.update:
+          id: api_info_page_uptime_label
+          text:
+            format: "Uptime: %s"
+            args: ['x.c_str()']
+
+text:
+  - id: guest_wifi_qrcode_text
+    platform: template
+    name: Guest Wifi QR Code Text
+    entity_category: "config"
+    mode: text
+    icon: "mdi:qrcode"
+    optimistic: true
+    restore_value: true
+    on_value:
+      - if:
+          condition:
+            lambda: "return id(guest_wifi_qrcode_text).state.empty();"
+          then:
+            lvgl.widget.hide: home_page_qrcode_button
+          else:
+            lvgl.widget.show: home_page_qrcode_button
+      - lvgl.qrcode.update:
+          id: guest_wifi_qrcode_page_qrcode
+          text: !lambda return x.c_str();
+
+time:
+  - id: homeassistant_time
+    platform: homeassistant
+    on_time:
+      # Every day at 00:00:00
+      - cron: '00 0 0 * * *'
+        then:
+          - script.execute: lvgl_update_date_script
+      # Every minute
+      - cron: '00 * * * * *'
+        then:
+          - script.execute: lvgl_update_time_script
+    on_time_sync:
+      then:
+        - script.execute: lvgl_update_date_script
+        - script.execute: lvgl_update_time_script
+
+number:
+  - id: brightness_percent
+    platform: template
+    name: "Brightness"
+    icon: 'mdi:monitor'
+    entity_category: config
+    unit_of_measurement: '%'
+    optimistic: true
+    restore_value: true
+    initial_value: 100
+    step: 5
+    min_value: 20
+    max_value: 100
+    on_value:
+      - lvgl.label.update:
+          id: brightness_label
+          text:
+            format: "Brightness: %.0f%"
+            args: ['id(brightness_percent).state']
+      - lvgl.slider.update:
+          id: brightness_percent_slider
+          value: !lambda return x;
+      - if:
+          condition:
+            not:
+              lvgl.page.is_showing: clock_page
+          then:
+            - script.execute: set_default_backlight_brightness
+  - id: clock_brightness_percent
+    platform: template
+    name: "Idle Clock Brightness"
+    icon: 'mdi:sleep'
+    entity_category: config
+    unit_of_measurement: '%'
+    optimistic: true
+    restore_value: true
+    initial_value: 30
+    step: 5
+    min_value: 20
+    max_value: 100
+    on_value:
+      - lvgl.label.update:
+          id: clock_brightness_label
+          text:
+            format: "Clock Brightness: %.0f%"
+            args: ['id(clock_brightness_percent).state']
+      - lvgl.slider.update:
+          id: clock_brightness_percent_slider
+          value: !lambda return x;
+      - if:
+          condition:
+            lvgl.page.is_showing: clock_page
+          then:
+            - script.execute: set_idle_backlight_brightness
+  - id: clock_delay_seconds
+    platform: template
+    name: "Idle Clock Delay"
+    icon: 'mdi:sleep'
+    entity_category: config
+    unit_of_measurement: 'secs'
+    optimistic: true
+    restore_value: true
+    initial_value: 30
+    step: 5
+    min_value: 10
+    max_value: 9999
+    on_value:
+      - lvgl.textarea.update:
+          id: clock_delay_seconds_textarea
+          text: !lambda return to_string(int(x));
+      - lvgl.label.update:
+          id: clock_delay_seconds_label
+          text: !lambda return to_string(int(x));
+  - id: off_delay_seconds
+    platform: template
+    name: "Off Delay"
+    icon: 'mdi:monitor-off'
+    entity_category: config
+    unit_of_measurement: 'secs'
+    optimistic: true
+    restore_value: true
+    initial_value: 30
+    step: 5
+    min_value: 10
+    max_value: 9999
+    on_value:
+      - lvgl.textarea.update:
+          id: off_delay_seconds_textarea
+          text: !lambda return to_string(int(x));
+      - lvgl.label.update:
+          id: off_delay_seconds_label
+          text: !lambda return to_string(int(x));
+
+sensor:
+  - id: wifi_signal_sensor
+    platform: wifi_signal
+    name: "RSSI"
+    update_interval: 5min
+    internal: true
+    filters:
+      - median:
+          window_size: 5
+    on_value:
+      - lvgl.label.update:
+          id: wifi_button_label
+          text: !lambda |-
+            static char buf[10];
+            std::string icon;
+            if (x >= -66.5) {
+                icon = "\U0000e63e"; // wifi
+            } else if (x > -83.5) {
+                icon = "\U0000e4d9"; // wifi 2 bar
+            } else if (x <= -83.5) {
+                icon = "\U0000e4ca"; // wifi 1 bar
+            } else {
+                icon = "\U0000f063"; // signal wifi bad
+            }
+            snprintf(buf, sizeof(buf), "%s", icon.c_str());
+            return buf;
+
+binary_sensor:
+  ### Hardware mute switch (Top of the device) ###
+  - id: hardware_mute_switch
+    platform: gpio
+    internal: true
+    pin: GPIO1
+    filters:
+      - invert:
+    on_press:
+      # - script.execute:
+      #    id: play_sound
+      #    priority: false
+      #    sound_file: !lambda return id(mute_switch_on_sound);
+      - switch.template.publish:
+          id: mute_mic_switch
+          state: true
+    on_release:
+      # - script.execute:
+      #    id: play_sound
+      #    priority: false
+      #    sound_file: !lambda return id(mute_switch_off_sound);
+      - switch.template.publish:
+          id: mute_mic_switch
+          state: false
+  ### top left hand physical button ###
+  - id: top_left_button
+    platform: gpio
+    pin:
+      number: GPIO0
+      mode: INPUT_PULLUP
+      inverted: true
+      ignore_strapping_warning: true
+    internal: true
+    on_multi_click:
+      - timing:
+          - ON for at least 50ms
+          - OFF for at least 50ms
+        then:
+          - switch.turn_off: timer_ringing_switch
+          - if:
+              condition:
+                not:
+                  - lvgl.page.is_showing: home_page
+              then:
+                - lambda: id(lvgl_change_page_script)->execute("home_page");
+      - timing:
+          - ON for at least 10s
+        then:
+          - button.press: factory_reset_button
+  ### red circle home button ###
+  - id: home_button
+    platform: gt911
+    index: 0
+    on_press:
+      - script.execute: set_default_backlight_brightness
+      - if:
+          condition:
+            not:
+              - lvgl.page.is_showing: home_page
+          then:
+            - lambda: id(lvgl_change_page_script)->execute("home_page");
+
+lvgl:
+  - id: lvgl_1
+    default_font: montserrat_18
+    disp_bg_color: BLACK
+    style_definitions:
+      - id: header_style
+        align: TOP_MID
+        width: 100%
+        height: 65
+        bg_color: BLACK
+        border_opa: TRANSP
+        border_width: 0
+        outline_opa: TRANSP
+        outline_width: 0
+        pad_all: 0
+        radius: 0
+        text_align: CENTER
+        text_color: my_blue
+        # text_font: my_font_22
+      - id: body_style
+        align: TOP_MID
+        width: 100%
+        height: 175
+        x: 0
+        y: 65
+        bg_color: BLACK
+        border_opa: TRANSP
+        border_width: 0
+        outline_opa: TRANSP
+        outline_width: 0
+        pad_all: 0
+        pad_column: 5
+        pad_row: 15
+        radius: 0
+        text_align: CENTER
+        text_color: my_blue
+        # text_font: my_font_22
+      - id: body_child_style
+        width: 100%
+        # height: 100%
+        bg_color: BLACK
+        border_opa: TRANSP
+        border_width: 0
+        outline_opa: TRANSP
+        outline_width: 0
+        pad_all: 0
+        pad_column: 5
+        pad_row: 15
+        radius: 0
+        text_align: CENTER
+        text_color: my_blue
+        # text_font: my_font_22
+      - id: settings_pages_body_style
+        align: TOP_MID
+        width: 100%
+        height: 145
+        x: 0
+        y: 65
+        bg_color: BLACK
+        border_opa: TRANSP
+        border_width: 0
+        outline_opa: TRANSP
+        outline_width: 0
+        pad_all: 0
+        pad_column: 5
+        pad_row: 15
+        radius: 0
+        text_align: CENTER
+        text_color: my_blue
+        # text_font: my_font_22
+      - id: settings_footer_style
+        # TODO - figure out settings navigation if desired, if not remove this, might require new "body" style
+        align: BOTTOM_MID
+        width: 100%
+        height: 30
+        bg_color: BLACK
+        border_opa: TRANSP
+        border_width: 0
+        outline_opa: TRANSP
+        outline_width: 0
+        pad_all: 0
+        radius: 0
+        text_align: CENTER
+        text_color: my_blue
+        # text_font: my_font_22
+      - id: fullscreen_style
+        align: TOP_MID
+        width: 100%
+        height: 240
+        x: 0
+        y: 0
+        bg_color: BLACK
+        border_opa: TRANSP
+        border_width: 0
+        outline_opa: TRANSP
+        outline_width: 0
+        pad_all: 0
+        pad_column: 5
+        pad_row: 15
+        radius: 0
+        text_align: CENTER
+        text_color: my_blue
+        # text_font: my_font_22
+      - id: header_popup_style
+        align: TOP_MID
+        width: 100%
+        height: 30
+        bg_color: WHITE
+        border_opa: COVER
+        border_color: dimgray
+        border_width: 1
+        outline_opa: TRANSP
+        outline_width: 0
+        pad_all: 0
+        radius: 0
+        text_align: CENTER
+        text_color: BLACK
+        text_font: montserrat_14
+        # text_font: my_font_16
+      - id: footer_popup_style
+        align: BOTTOM_MID
+        width: 100%
+        height: 30
+        bg_color: WHITE
+        border_opa: COVER
+        border_color: dimgray
+        border_width: 1
+        outline_opa: TRANSP
+        outline_width: 0
+        pad_all: 0
+        radius: 0
+        text_align: CENTER
+        text_color: BLACK
+        text_font: montserrat_14
+        # text_font: my_font_16
+      - id: center_popup_style
+        align: CENTER
+        width: 60%
+        height: 60%
+        bg_color: WHITE
+        border_opa: COVER
+        border_color: dimgray
+        border_width: 1
+        outline_opa: TRANSP
+        outline_width: 0
+        pad_all: 0
+        radius: 10
+        text_align: CENTER
+        text_color: BLACK
+        text_font: my_font_72
+    theme:
+      bar:
+        height: 10
+        width: 60%
+        align: CENTER
+      button:
+        height: 45
+        width: 50
+        align: CENTER
+        bg_color: BLACK
+        border_color: dimgray
+        border_opa: COVER
+        border_width: 0
+        text_color: my_blue
+        text_font: mdi_icons_45
+      dropdown:
+        height: 30
+        align: CENTER
+        text_align: CENTER
+        # text_font: montserrat_18
+      label:
+        align: CENTER
+        text_align: CENTER
+        text_color: my_blue
+      image:
+        align: CENTER
+      qrcode:
+        align: CENTER
+      slider:
+        height: 10
+        width: 90%
+        align: CENTER
+      spinbox:
+        height: 30
+        align: CENTER
+        text_align: CENTER
+      spinner:
+        height: 50
+        width: 50
+        align: CENTER
+      textarea:
+        align: CENTER
+    msgboxes:
+      - id: restart_msgbox
+        close_button: false
+        title: Restart
+        body:
+          text: "Please confirm restart?"
+          bg_color: WHITE
+          text_color: BLACK
+        buttons:
+          - text: "Ok"
+            on_click:
+              then:
+                - button.press: restart_button
+          - text: "Cancel"
+            on_click:
+              then:
+                - lvgl.widget.hide: restart_msgbox
+      - id: factory_reset_msgbox
+        close_button: false
+        title: Factory Reset
+        body:
+          text: "Are you sure? A factory reset is irreversible!"
+          bg_color: WHITE
+          text_color: my_red
+        buttons:
+          - text: "Ok"
+            on_click:
+              then:
+                - button.press: factory_reset_button
+          - text: "Cancel"
+            on_click:
+              then:
+                - lvgl.widget.hide: factory_reset_msgbox
+    top_layer:
+      widgets:
+        - obj:  # header_obj
+            id: header_obj
+            styles: header_style
+            layout:
+              type: FLEX
+              flex_flow: ROW
+              flex_align_main: SPACE_EVENLY
+              flex_align_cross: SPACE_EVENLY
+              flex_align_track: CENTER
+            widgets:
+              - button:
+                  id: api_button
+                  widgets:
+                    - label:
+                        id: api_button_label
+                        text: "\U000F07D0"
+                  on_press:
+                    then:
+                      - lambda: id(lvgl_change_page_script)->execute("api_info_page");
+              - button:
+                  id: wifi_button
+                  widgets:
+                    - label:
+                        id: wifi_button_label
+                        text: "\U0000e63e"
+                        text_font: google_icons_45
+                  on_press:
+                    then:
+                      - lambda: id(lvgl_change_page_script)->execute("wifi_info_page");
+              - button:
+                  id: mic_mute_button
+                  widgets:
+                    - label:
+                        id: mic_mute_button_label
+                        text: "\U000F036C"
+                  on_press:
+                    then:
+                      - switch.toggle: mute_mic_switch
+              - button:
+                  id: speaker_mute_button
+                  widgets:
+                    - label:
+                        id: speaker_mute_button_label
+                        text: "\U000F057E"
+                  on_press:
+                    then:
+                      - switch.toggle: mute_speaker_switch
+              - button:
+                  id: settings_button
+                  widgets:
+                    - label:
+                        id: settings_button_label
+                        text: "\U000F0493"
+                  on_press:
+                    then:
+                      - lambda: id(lvgl_change_page_script)->execute("settings_page");
+        - obj:  # header_popup_obj
+            id: header_popup_obj
+            styles: header_popup_style
+            hidden: true
+            widgets:
+              - label:
+                  id: header_popup_label
+                  text: "..."
+        - obj:  # footer_popup_obj
+            id: footer_popup_obj
+            styles: footer_popup_style
+            hidden: true
+            widgets:
+              - label:
+                  id: footer_popup_label
+                  text: "..."
+        - obj:  # center_popup_obj
+            id: center_popup_obj
+            styles: center_popup_style
+            hidden: true
+            widgets:
+              - label:
+                  id: center_popup_label
+                  text: "0"
+        - keyboard:  # lvgl_keyboard
+            id: lvgl_keyboard
+            hidden: true
+            on_ready:
+              then:
+                - lvgl.widget.hide: lvgl_keyboard
+            on_cancel:
+              then:
+                - lvgl.widget.hide: lvgl_keyboard
+        # TODO Move to Pages section and adjust on_boot routine
+        - obj:  # boot_screen_obj
+            id: boot_screen_obj
+            styles: fullscreen_style
+            widgets:
+              - image:
+                  src: boot_screen_image
+              - spinner:
+                  spin_time: 1s
+                  arc_length: 60deg
+                  arc_width: 8
+                  indicator:
+                    arc_color: 0x18bcf2
+                    arc_width: 8
+            on_press:
+              - lvgl.widget.hide: boot_screen_obj
+    pages:
+      - id: home_page
+        # TODO - Consider removing "skip" and use footer nav between home and settings screens
+        skip: true
+        widgets:
+          - obj:
+              styles: body_style
+              layout:
+                type: FLEX
+                flex_flow: COLUMN
+                flex_align_main: START
+                flex_align_cross: CENTER
+                flex_align_track: CENTER
+              widgets:
+                - label:
+                    id: media_player_state_label
+                    pad_top: 10
+                    text: "Unknown"
+                - obj:
+                    styles: body_child_style
+                    height: 55
+                    layout:
+                      type: FLEX
+                      flex_flow: ROW
+                      flex_align_main: SPACE_EVENLY
+                      flex_align_cross: CENTER
+                      flex_align_track: CENTER
+                    widgets:
+                      - button:
+                          widgets:
+                            - label:
+                                text: "\U000F075E"
+                          on_press:
+                            then:
+                              - if:
+                                  condition:
+                                    - lambda: "return id(speaker_media_player).volume > 0;"
+                                  then:
+                                    - media_player.volume_down:
+                              - lvgl.bar.update:
+                                  id: volume_bar
+                                  value: !lambda "return id(speaker_media_player).volume * 100;"
+                      - button:
+                          widgets:
+                            - label:
+                                id: media_control_button_label
+                                text: "\U000F040A"
+                          on_press:
+                            then:
+                              - if:
+                                  condition:
+                                    media_player.is_paused:
+                                  then:
+                                    - media_player.play
+                              - if:
+                                  condition:
+                                    or:
+                                      - media_player.is_playing:
+                                      - media_player.is_announcing:
+                                  then:
+                                    - media_player.pause
+                      - button:
+                          widgets:
+                            - label:
+                                text: "\U000F075D"
+                          on_press:
+                            then:
+                              - if:
+                                  condition:
+                                    - lambda: "return id(speaker_media_player).volume < 1;"
+                                  then:
+                                    - media_player.volume_up:
+                              - lvgl.bar.update:
+                                  id: volume_bar
+                                  value: !lambda "return id(speaker_media_player).volume * 100;"
+                # TODO - Add volume bar display, possibly add small icons next to bar
+                - bar:
+                    id: volume_bar
+                    styles: body_child_style
+                    max_value: 100
+                    min_value: 0
+                    value: !lambda "return id(speaker_media_player).volume * 100;"
+          # TODO - Add entry for time remaining on timers
+          - label:
+              id: home_page_time_remaining_label
+              align: BOTTOM_LEFT
+              pad_left: 10
+              pad_bottom: 10
+              text: "No Timers"
+              # text: !lambda |-
+              #     if (id(time_remaining_text).state.c_str() != "0:00:00") {
+              #       return id(time_remaining_text).state.c_str();
+              #     } else {
+              #       return;
+              #     }
+          - button:
+              id: home_page_qrcode_button
+              hidden: !lambda return id(guest_wifi_qrcode_text).state.empty();
+              align: BOTTOM_RIGHT
+              widgets:
+                - label:
+                    text: "\U000F0432"
+                    border_opa: TRANSP
+              on_press:
+                then:
+                  - lambda: id(lvgl_change_page_script)->execute("guest_wifi_qrcode_page");
+                  # - lvgl.page.show: guest_wifi_qrcode_page
+      - id: clock_page
+        skip: true
+        widgets:
+          - obj:
+              styles: fullscreen_style
+              layout:
+                type: FLEX
+                flex_flow: COLUMN
+                flex_align_main: CENTER
+                flex_align_cross: CENTER
+                flex_align_track: CENTER
+              widgets:
+                - label:
+                    id: clock_page_date_label
+                    text_color: WHITE
+                    # text_font: montserrat_18
+                - label:
+                    id: clock_page_time_label
+                    text_color: WHITE
+                    text_font: my_font_82
+      - id: ota_page
+        skip: true
+        widgets:
+          - obj:
+              styles: fullscreen_style
+              layout:
+                type: FLEX
+                flex_flow: COLUMN
+                flex_align_main: CENTER
+                flex_align_cross: CENTER
+                flex_align_track: CENTER
+              widgets:
+                - label:
+                    text: "UPDATING FIRMWARE"
+                    text_color: my_red
+                    text_font: montserrat_24
+                    # text_font: my_font_28
+                - bar:
+                    id: ota_page_progress_bar
+                    text_color: my_red
+                    max_value: 100
+                    min_value: 0
+                    value: 0
+      - id: api_info_page
+        skip: true
+        widgets:
+          - obj:
+              styles: body_style
+              layout:
+                type: FLEX
+                flex_flow: COLUMN
+                flex_align_main: SPACE_EVENLY
+                flex_align_cross: CENTER
+                flex_align_track: CENTER
+              widgets:
+                - label:
+                    id: api_info_page_client_info_label
+                - label:
+                    id: api_info_page_client_address_label
+                - label:
+                    id: api_info_page_version_label
+                - label:
+                    id: api_info_page_uptime_label
+      - id: wifi_info_page
+        skip: true
+        widgets:
+          - obj:
+              styles: body_style
+              layout:
+                type: FLEX
+                flex_flow: COLUMN
+                flex_align_main: SPACE_EVENLY
+                flex_align_cross: CENTER
+                flex_align_track: CENTER
+              widgets:
+                - label:
+                    id: wifi_info_page_ssid_label
+                - label:
+                    id: wifi_info_page_ip_label
+                - label:
+                    id: wifi_info_page_mac_label
+      - id: settings_page
+        widgets:
+          - obj:
+              styles: body_style
+              widgets:
+                - tabview:
+                    styles: body_child_style
+                    # height: 175
+                    position: LEFT
+                    size: 30
+                    tab_style:
+                      styles: settings_footer_style
+                      height: 175
+                      text_font: mdi_icons_25
+                      items:
+                        styles: body_child_style
+                        # height: 175
+                        border_opa: COVER
+                        border_width: 1
+                    tabs:
+                      - id: device_settings_tab  # Device Settings
+                        name: "\U000F08D6"
+                        widgets:
+                          - obj:
+                              styles: body_child_style
+                              layout:
+                                type: FLEX
+                                flex_flow: COLUMN
+                                flex_align_main: CENTER  # START
+                                flex_align_cross: CENTER
+                                flex_align_track: CENTER
+                              widgets:
+                                # Default Brightness
+                                - label:
+                                    id: brightness_label
+                                    text: "Brightness:"
+                                - slider:
+                                    id: brightness_percent_slider
+                                    min_value: 20
+                                    max_value: 100
+                                    # value: !lambda return id(brightness_percent).state;
+                                    on_change:
+                                      - lvgl.label.update:
+                                          id: brightness_label
+                                          text:
+                                            format: "Brightness: %.0f%"
+                                            args: ['x']
+                                    on_release:
+                                      - number.set:
+                                          id: brightness_percent
+                                          value: !lambda return int(x);
+                                # Time Format
+                                - obj:
+                                    styles: body_child_style
+                                    height: 30
+                                    layout:
+                                      type: FLEX
+                                      flex_flow: ROW
+                                      flex_align_main: SPACE_BETWEEN  # CENTER
+                                      flex_align_cross: CENTER
+                                      flex_align_track: CENTER
+                                    widgets:
+                                      - label:
+                                          text: "Time Format:"
+                                      - dropdown:
+                                          id: time_format_dropdown
+                                          options:
+                                            - 12 Hour
+                                            - 24 Hour
+                                          selected_text: !lambda return id(time_format).state;
+                                          on_change:
+                                            - select.set_index:
+                                                id: time_format
+                                                index: !lambda return x;
+                                # Restart & Factory Reset
+                                - obj:
+                                    styles: body_child_style
+                                    height: 30
+                                    layout:
+                                      type: FLEX
+                                      flex_flow: ROW
+                                      flex_align_main: SPACE_BETWEEN
+                                      flex_align_cross: CENTER
+                                      flex_align_track: CENTER
+                                    widgets:
+                                      - button:  # Restart
+                                          width: 75
+                                          height: 30
+                                          border_opa: COVER
+                                          border_width: 1
+                                          widgets:
+                                            - label:
+                                                text: "Restart"
+                                                text_font: montserrat_18
+                                          on_press:
+                                            then:
+                                              - lvgl.widget.show: restart_msgbox
+                                      - button:  # Factory Reset
+                                          width: 130
+                                          height: 30
+                                          border_opa: COVER
+                                          border_width: 1
+                                          widgets:
+                                            - label:
+                                                text: "Factory Reset"
+                                                text_font: montserrat_18
+                                          on_press:
+                                            then:
+                                              - lvgl.widget.show: factory_reset_msgbox
+                      - id: off_settings_tab  # Off Settings
+                        name: "\U000F04B2"
+                        widgets:
+                          - obj:
+                              styles: body_child_style
+                              layout:
+                                type: FLEX
+                                flex_flow: COLUMN
+                                flex_align_main: START
+                                flex_align_cross: CENTER
+                                flex_align_track: CENTER
+                              widgets:
+                                # Off Enabled
+                                - obj:
+                                    styles: body_child_style
+                                    height: 30
+                                    layout:
+                                      type: FLEX
+                                      flex_flow: ROW
+                                      flex_align_main: SPACE_BETWEEN
+                                      flex_align_cross: CENTER
+                                      flex_align_track: CENTER
+                                    widgets:
+                                      - label:
+                                          text: "Screen Off Enabled:"
+                                      - switch:
+                                          id: off_enabled_lvgl_switch
+                                          on_value:
+                                            - switch.template.publish:
+                                                id: off_enabled_switch
+                                                state: !lambda return x;
+                                # Off Delay Seconds
+                                - obj:
+                                    styles: body_child_style
+                                    height: 30
+                                    layout:
+                                      type: FLEX
+                                      flex_flow: ROW
+                                      flex_align_main: SPACE_BETWEEN
+                                      flex_align_cross: CENTER
+                                      flex_align_track: CENTER
+                                    widgets:
+                                      - label:
+                                          text: "Delay (secs):"
+                                      - button:
+                                          id: off_delay_seconds_button
+                                          width: 35%
+                                          height: 30
+                                          bg_color: WHITE
+                                          border_opa: COVER
+                                          border_width: 1
+                                          text_color: BLACK
+                                          widgets:
+                                            - label:
+                                                id: off_delay_seconds_label
+                                                text_font: montserrat_18
+                                          on_press:
+                                            then:
+                                              - lvgl.keyboard.update:
+                                                  id: lvgl_keyboard
+                                                  mode: number
+                                                  textarea: off_delay_seconds_textarea
+                                              - lambda: id(update_header_popup_script)->execute(to_string(int(id(off_delay_seconds).state)));
+                                              - lvgl.widget.show: [lvgl_keyboard, header_popup_obj]
+                                      - textarea:
+                                          id: off_delay_seconds_textarea
+                                          hidden: true
+                                          width: 35%
+                                          accepted_chars: ".0123456789"
+                                          max_length: 4
+                                          one_line: true
+                                          text: 30
+                                          on_value:
+                                            - lambda: id(update_header_popup_script)->execute(text.c_str());
+                                          on_ready:
+                                            - lvgl.widget.hide: [header_popup_obj]
+                                            - number.set:
+                                                id: off_delay_seconds
+                                                value: !lambda return atoi(text.c_str());
+                                            - lambda: id(update_header_popup_script)->execute("");
+                      - id: clock_settings_tab  # Clock Settings
+                        name: "\U000F0954"
+                        widgets:
+                          - obj:
+                              styles: body_child_style
+                              layout:
+                                type: FLEX
+                                flex_flow: COLUMN
+                                flex_align_main: START
+                                flex_align_cross: CENTER
+                                flex_align_track: CENTER
+                              widgets:
+                                # Clock Enabled
+                                - obj:
+                                    styles: body_child_style
+                                    height: 30
+                                    layout:
+                                      type: FLEX
+                                      flex_flow: ROW
+                                      flex_align_main: SPACE_BETWEEN
+                                      flex_align_cross: CENTER
+                                      flex_align_track: CENTER
+                                    widgets:
+                                      - label:
+                                          text: "Idle Clock Enabled:"
+                                      - switch:
+                                          id: clock_enabled_lvgl_switch
+                                          on_value:
+                                            - switch.template.publish:
+                                                id: clock_enabled_switch
+                                                state: !lambda return x;
+                                # Clock Delay Seconds
+                                - obj:
+                                    styles: body_child_style
+                                    height: 30
+                                    layout:
+                                      type: FLEX
+                                      flex_flow: ROW
+                                      flex_align_main: SPACE_BETWEEN
+                                      flex_align_cross: CENTER
+                                      flex_align_track: CENTER
+                                    widgets:
+                                      - label:
+                                          text: "Delay (secs):"
+                                      - button:
+                                          id: clock_delay_seconds_button
+                                          width: 35%
+                                          height: 30
+                                          bg_color: WHITE
+                                          border_opa: COVER
+                                          border_width: 1
+                                          text_color: BLACK
+                                          widgets:
+                                            - label:
+                                                id: clock_delay_seconds_label
+                                                text_font: montserrat_18
+                                          on_press:
+                                            then:
+                                              - lvgl.keyboard.update:
+                                                  id: lvgl_keyboard
+                                                  mode: number
+                                                  textarea: clock_delay_seconds_textarea
+                                              - lambda: id(update_header_popup_script)->execute(to_string(int(id(clock_delay_seconds).state)));
+                                              - lvgl.widget.show: [lvgl_keyboard, header_popup_obj]
+                                      - textarea:
+                                          id: clock_delay_seconds_textarea
+                                          hidden: true
+                                          width: 35%
+                                          accepted_chars: ".0123456789"
+                                          max_length: 4
+                                          one_line: true
+                                          text: 30
+                                          on_value:
+                                            - lambda: id(update_header_popup_script)->execute(text.c_str());
+                                          on_ready:
+                                            - lvgl.widget.hide: [header_popup_obj]
+                                            - number.set:
+                                                id: clock_delay_seconds
+                                                value: !lambda return atoi(text.c_str());
+                                            - lambda: id(update_header_popup_script)->execute("");
+                                # Clock Brightness
+                                - label:
+                                    id: clock_brightness_label
+                                    text: "Clock Brightness:"
+                                - slider:
+                                    id: clock_brightness_percent_slider
+                                    min_value: 20
+                                    max_value: 100
+                                    # value: !lambda return id(clock_brightness_percent).state;
+                                    on_change:
+                                      - lvgl.label.update:
+                                          id: clock_brightness_label
+                                          text:
+                                            format: "Clock Brightness: %.0f%"
+                                            args: ['x']
+                                    on_release:
+                                      - number.set:
+                                          id: clock_brightness_percent
+                                          value: !lambda return int(x);
+                      - id: assist_settings_tab  # Assist Settings
+                        name: "\U000F0B7B"
+                        widgets:
+                          - obj:
+                              styles: body_child_style
+                              layout:
+                                type: FLEX
+                                flex_flow: COLUMN
+                                flex_align_main: START
+                                flex_align_cross: CENTER
+                                flex_align_track: CENTER
+                              widgets:
+                                # Wake Sound
+                                - obj:
+                                    styles: body_child_style
+                                    height: 30
+                                    layout:
+                                      type: FLEX
+                                      flex_flow: ROW
+                                      flex_align_main: SPACE_BETWEEN
+                                      flex_align_cross: CENTER
+                                      flex_align_track: CENTER
+                                    widgets:
+                                      - label:
+                                          text: "Play Wake Sound:"
+                                      - switch:
+                                          id: play_wake_sound_lvgl_switch
+                                          on_value:
+                                            - switch.template.publish:
+                                                id: play_wake_sound_switch
+                                                state: !lambda return x;
+                                # Mute Responses
+                                - obj:
+                                    styles: body_child_style
+                                    height: 30
+                                    layout:
+                                      type: FLEX
+                                      flex_flow: ROW
+                                      flex_align_main: SPACE_BETWEEN
+                                      flex_align_cross: CENTER
+                                      flex_align_track: CENTER
+                                    widgets:
+                                      - label:
+                                          text: "Mute Responses:"
+                                      - switch:
+                                          id: mute_responses_lvgl_switch
+                                          on_value:
+                                            - switch.template.publish:
+                                                id: mute_responses_switch
+                                                state: !lambda return x;
+                                # Show Conversation
+                                - obj:
+                                    styles: body_child_style
+                                    height: 30
+                                    layout:
+                                      type: FLEX
+                                      flex_flow: ROW
+                                      flex_align_main: SPACE_BETWEEN
+                                      flex_align_cross: CENTER
+                                      flex_align_track: CENTER
+                                    widgets:
+                                      - label:
+                                          text: "Show Conversation:"
+                                      - switch:
+                                          id: show_conversation_lvgl_switch
+                                          on_value:
+                                            - switch.template.publish:
+                                                id: show_conversation_switch
+                                                state: !lambda return x;
+      - id: assist_listening_page
+        skip: true
+        widgets:
+          - obj:
+              styles: fullscreen_style
+              widgets:
+                - image:
+                    src: listening_image
+                - spinner:
+                    spin_time: 1s
+                    arc_length: 60deg
+                    arc_width: 8
+                    indicator:
+                      arc_color: 0x18bcf2
+                      arc_width: 8
+      - id: assist_thinking_page
+        skip: true
+        widgets:
+          - obj:
+              styles: fullscreen_style
+              widgets:
+                - image:
+                    src: thinking_image
+                - spinner:
+                    spin_time: 1s
+                    arc_length: 60deg
+                    arc_width: 8
+                    indicator:
+                      arc_color: 0x18bcf2
+                      arc_width: 8
+      - id: assist_replying_page
+        skip: true
+        widgets:
+          - obj:
+              styles: fullscreen_style
+              widgets:
+                - image:
+                    src: replying_image
+      - id: assist_error_page
+        skip: true
+        widgets:
+          - obj:
+              styles: fullscreen_style
+              widgets:
+                - image:
+                    src: error_image
+              on_press:
+                then:
+                  - lambda: id(lvgl_change_page_script)->execute("home_page");
+      - id: assist_timer_finished_page
+        skip: true
+        widgets:
+          - obj:
+              styles: fullscreen_style
+              widgets:
+                - image:
+                    src: timer_finished_image
+              on_press:
+                then:
+                  - lambda: id(lvgl_change_page_script)->execute("home_page");
+      - id: guest_wifi_qrcode_page
+        skip: true
+        widgets:
+          - obj:
+              styles: header_style
+              widgets:
+                - label:
+                    text: "Guest Wifi"
+          - obj:
+              styles: body_style
+              layout:
+                type: FLEX
+                flex_flow: COLUMN
+                flex_align_main: CENTER
+                flex_align_cross: CENTER
+                flex_align_track: CENTER
+              widgets:
+                - qrcode:
+                    id: guest_wifi_qrcode_page_qrcode
+                    text: !lambda return id(guest_wifi_qrcode_text).state;
+                    size: 125
+    on_idle:
+      - timeout: !lambda "return (id(clock_delay_seconds).state * 1000);"
+        then:
+          - if:
+              condition:
+                switch.is_on: clock_enabled_switch
+              then:
+                - lambda: id(lvgl_change_page_script)->execute("clock_page");
+      - timeout: !lambda "return (id(off_delay_seconds).state * 1000);"
+        then:
+          - if:
+              condition:
+                - switch.is_on: off_enabled_switch
+              then:
+                - lvgl.pause:
+    on_pause:
+      - light.turn_off: backlight_light
+    on_resume:
+      - script.execute: set_default_backlight_brightness
+      - lvgl.widget.redraw:
+### config end ###
